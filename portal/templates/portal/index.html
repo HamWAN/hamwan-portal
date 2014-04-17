@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load portal %}
+{% block content %}
+
+{% if own_hosts %}
+    <h2 class="sub-header">Your hosts</h2>
+    {% hosttable own_hosts %}
+{% endif %}
+
+{% if authorized_hosts %}
+    <h2 class="sub-header">Your other authorized hosts</h2>
+    {% hosttable authorized_hosts %}
+{% endif %}
+
+{% if all_hosts %}
+    <h2 class="sub-header">All hosts</h2>
+    {% hosttable all_hosts %}
+{% endif %}
+
+
+{% if own_subnets %}
+    <h2 class="sub-header">Your subnets</h2>
+    {% subnettable own_subnets %}
+{% endif %}
+
+{% if all_subnets %}
+    <h2 class="sub-header">All subnets</h2>
+    {% subnettable all_subnets %}
+{% endif %}
+
+{% endblock %}
