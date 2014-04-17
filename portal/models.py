@@ -54,6 +54,9 @@ class Host(models.Model):
         verbose_name="Ethernet MAC")
     wlan_mac = MACAddressField(null=True, blank=True,
         verbose_name="Wireless MAC")
+    auto_dns = models.NullBooleanField(null=True, blank=True, default=True,
+        verbose_name="Auto manage DNS", help_text="Upon saving, automatically "
+        "create an A record and a PTR record for this hostname.")
 
     latitude = models.FloatField(null=True, blank=True,
         help_text="Decimal (e.g., 00.0000)")
@@ -73,26 +76,28 @@ class Host(models.Model):
         return ('portal.views.host_detail', [self.name,])
 
     def save(self, *args, **kwargs):
-        # remove old DNS record
-        if self.pk is not None:
-            orig = Host.objects.get(pk=self.pk)
-            try:
-                orig_a = Record.objects.filter(name__iexact=orig.fqdn(), type='A')
-                for record in orig_a:
-                    record.delete()
-                # TODO: should we remove old PTR too, or solve with SQL trigger?
-            except Record.DoesNotExist:
-                pass
+        if self.auto_dns:
+            # remove old DNS record
+            if self.pk is not None:
+                orig = Host.objects.get(pk=self.pk)
+                try:
+                    orig_a = Record.objects.filter(
+                        name__iexact=orig.fqdn(), type='A')
+                    for record in orig_a:
+                        record.delete()
+                    # TODO: should we remove old PTR too, or solve with SQL trigger?
+                except Record.DoesNotExist:
+                    pass
 
-        # create new DNS record
-        new_dns = Record(
-            domain=Domain.objects.get(name='hamwan.net'),
-            name=self.fqdn().lower(),
-            type='A',
-            content=(self.eth_ipv4 or self.wlan_ipv4),
-            auth=True,
-        )
-        new_dns.save()
+            # create new DNS record
+            new_dns = Record(
+                domain=Domain.objects.get(name='hamwan.net'),
+                name=self.fqdn().lower(),
+                type='A',
+                content=(self.eth_ipv4 or self.wlan_ipv4),
+                auth=True,
+            )
+            new_dns.save()
 
         super(Host, self).save(*args, **kwargs)
 
