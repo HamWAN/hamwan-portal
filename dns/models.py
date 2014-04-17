@@ -63,6 +63,8 @@ class Record(models.Model):
 
     class Meta:
         db_table = 'records'
+        ordering = ['name', 'type', 'content']
+
 
 # class Supermasters(models.Model):
 #     ip = models.GenericIPAddressField()
