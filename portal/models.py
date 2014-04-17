@@ -75,29 +75,40 @@ class Host(models.Model):
     def get_absolute_url(self):
         return ('portal.views.host_detail', [self.name,])
 
+    def _add_dns(self):
+        """adds new A and PTR records"""
+        new_dns = Record(
+            domain=Domain.objects.get(name='hamwan.net'),
+            name=self.fqdn().lower(),
+            type='A',
+            content=(self.eth_ipv4 or self.wlan_ipv4),
+            auth=True,
+        )
+        new_dns.save()
+
+    def _remove_dns(self):
+        """removes old DNS records"""
+        if self.pk is not None:
+            orig = Host.objects.get(pk=self.pk)
+            try:
+                orig_a = Record.objects.filter(
+                    name__iexact=orig.fqdn(), type='A')
+                for record in orig_a:
+                    record.delete()
+                # TODO: should we remove old PTR too, or solve with SQL trigger?
+            except Record.DoesNotExist:
+                pass
+
+    def delete(self):
+        if self.auto_dns:
+            self._remove_dns()
+        super(Host, self).delete()
+
     def save(self, *args, **kwargs):
         if self.auto_dns:
-            # remove old DNS record
-            if self.pk is not None:
-                orig = Host.objects.get(pk=self.pk)
-                try:
-                    orig_a = Record.objects.filter(
-                        name__iexact=orig.fqdn(), type='A')
-                    for record in orig_a:
-                        record.delete()
-                    # TODO: should we remove old PTR too, or solve with SQL trigger?
-                except Record.DoesNotExist:
-                    pass
-
-            # create new DNS record
-            new_dns = Record(
-                domain=Domain.objects.get(name='hamwan.net'),
-                name=self.fqdn().lower(),
-                type='A',
-                content=(self.eth_ipv4 or self.wlan_ipv4),
-                auth=True,
-            )
-            new_dns.save()
+            # update DNS records
+            self._remove_dns()
+            self._add_dns()
 
         super(Host, self).save(*args, **kwargs)
 
