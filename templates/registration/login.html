@@ -16,13 +16,26 @@
 {% else %}
     <h1>Using the HamWAN Portal</h1>
     <p class="lead">We need to authenticate you, but we can't use encryption over ham radio.</p>
-    <p>SSL is typically used to verify the authenticity of the server you are connecting to and provide privacy by encrypted the contents of your packets. We're going to use the authentication component without the privacy component. This is atypical on the internet, so most browsers won't let you do it. However, Opera 12.16 not only lets you do this, but provides very clear dialogs letting you know when that privacy component is turned off.</p>
+    <p>
+      SSL is typically used to verify the authenticity of the server you are
+      connecting to and provide privacy by encrypting the contents of your
+      packets. We're going to use the authentication component without the
+      privacy component. This is atypical on the internet, so most browsers
+      won't let you do it. However, Opera 12.16 not only lets you do this, but
+      provides very clear dialogs letting you know when that privacy component
+      is turned off.
+    </p>
     <p class="lead">Please <a href="http://www.hamwan.org/t/tiki-index.php?page=SSL+without+Encryption#Opera_12.16">follow these instructions to set up Opera 12.16 for this website</a>, then come back.</p>
     <p>Now that you have your browser configured, it's time to try it out:</p>
     <p class="lead"><a href="https://{{ request.META.HTTP_HOST }}/">https://{{ request.META.HTTP_HOST }}</a></p>
     
     <h3>Did something go wrong?</h3>
-    <p>If you got an error like <code>ERR_SSL_VERSION_OR_CIPHER_MISMATCH</code>, it means your browser is requiring encryption. Return to the browswer configuration step and make sure your browser is configured to accept authentication-only ciphers.</p>
+    <p>
+      If you got an error like <code>ERR_SSL_VERSION_OR_CIPHER_MISMATCH</code>,
+      it means your browser is requiring encryption. Return to the browswer
+      configuration step and make sure your browser is configured to accept
+      authentication-only ciphers.
+    </p>
 {% endif %}
     <h3 class="text-center"><a href="#" onclick="$('#login').show();">I give up</a></h3>
   </div>
