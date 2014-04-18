@@ -1,3 +1,5 @@
+import subprocess
+
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -111,6 +113,14 @@ class Host(models.Model):
             self._add_dns()
 
         super(Host, self).save(*args, **kwargs)
+
+    def ping(self):
+        """ICMP ping the host"""
+        return 0 == subprocess.call(
+            "ping -c 1 %s" % (self.eth_ipv4 or self.wlan_ipv4),
+            shell=True,
+            stdout=open('/dev/null', 'w'),
+            stderr=subprocess.STDOUT)
 
 
 class Subnet(models.Model):
