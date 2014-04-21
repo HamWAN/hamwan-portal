@@ -25,7 +25,13 @@ class UserHostForm(HostForm):
 
     def clean_name(self):
         """Require hostname to start with callsign"""
+        instance = getattr(self, 'instance', None)
         name = self.cleaned_data['name']
+
+        if instance and instance.pk and instance.name == name:
+            # hostname hasn't changed, allow
+            return name
+
         user = self.request.user.username
         if name != user and not name.endswith('.%s' % user):
             raise forms.ValidationError("Name must end with %s." % user)
