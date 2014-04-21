@@ -33,7 +33,10 @@ class UserHostForm(HostForm):
 
     def clean_eth_ipv4(self):
         instance = getattr(self, 'instance', None)
-        ip = IPAddress(self.cleaned_data['eth_ipv4'])
+        try:
+            ip = IPAddress(self.cleaned_data['eth_ipv4'])
+        except ValueError, msg:
+            raise forms.ValidationError(msg)
         if (instance and instance.pk and instance.eth_ipv4 == ip) or \
         any([ip in net.network for net in self.request.user.subnets_owned.all()]):
             # allow editing hosts outside your allocation, but can't change ip
