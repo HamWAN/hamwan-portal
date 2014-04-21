@@ -31,17 +31,14 @@ class UserHostForm(HostForm):
             raise forms.ValidationError("Name must end with %s." % user)
         return name
 
-
     def clean_eth_ipv4(self):
         instance = getattr(self, 'instance', None)
-        ip = self.cleaned_data['eth_ipv4']
-        print repr(ip)
-        if instance and instance.pk and instance.eth_ipv4 == ip:
+        ip = IPAddress(self.cleaned_data['eth_ipv4'])
+        if (instance and instance.pk and instance.eth_ipv4 == ip) or \
+        any([ip in net.network for net in self.request.user.subnets_owned.all()]):
             # allow editing hosts outside your allocation, but can't change ip
-            return ip
-        elif any([IPAddress(ip) in net.network for net in self.request.user.subnets_owned.all()]):
-            # allow saving hosts with IPs in user's subnet allocations
-            return ip
+            # or saving hosts with IPs in user's subnet allocations
+            return self.cleaned_data['eth_ipv4']
         else:
             raise forms.ValidationError("IP must be in your subnet.")
 
