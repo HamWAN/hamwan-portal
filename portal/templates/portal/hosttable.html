@@ -5,8 +5,7 @@
           <th>Host</th>
           <th>FQDN</th>
           <th>Owner</th>
-          <th>Ethernet IP</th>
-          <th>WLAN IP</th>
+          <th>IP Addresses</th>
           <th>Notes</th>
         </tr>
       </thead>
@@ -16,8 +15,7 @@
           <td><a href="{% url 'portal.views.host_detail' host.name %}">{{ host }}</a></td>
           <td><a href="http://{{ host.fqdn }}/">{{ host.fqdn }}</a></td>
           <td>{{ host.owner }}</td>
-          <td>{{ host.eth_ipv4 }}</td>
-          <td>{{ host.wlan_ipv4 }}</td>
+          <td>{{ host.ipaddresses.all|join:"<br>" }}</td>
           <td>{{ host.notes|truncatewords:3 }}</td>
         </tr>
     {% endfor %}

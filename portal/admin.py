@@ -2,17 +2,27 @@ from models import *
 from django.contrib import admin
 
 
+class IPAddressInline(admin.TabularInline):
+    model = IPAddress
+    extra = 1
+
+
 class HostAdmin(admin.ModelAdmin):
     list_display = (
         '__unicode__',
         'owner',
-        'eth_ipv4',
-        'wlan_ipv4',
+        'get_ips'
     )
     list_filter = ('owner',)
-    search_fields = ('name', 'eth_ipv4', 'wlan_ipv4')
+    search_fields = ('name',)
     save_as = True
+    inlines = [IPAddressInline]
+
+    def get_ips(self, obj):
+        return "\n".join([str(a.ip) for a in obj.ipaddresses.all()])
+    get_ips.short_description = "IP Addresses"
 admin.site.register(Host, HostAdmin)
+
 
 class SubnetAdmin(admin.ModelAdmin):
     list_display = (

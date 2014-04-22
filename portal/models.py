@@ -48,17 +48,10 @@ class Host(models.Model):
         related_name="authorized_hosts",
         help_text="Selected admins will be allowed to edit this host record.")
 
-    eth_ipv4 = IPAddressField(null=True, blank=True,
-        verbose_name="Ethernet IPv4")
-    wlan_ipv4 = IPAddressField(null=True, blank=True,
-        verbose_name="Wireless IPv4")
     eth_mac = MACAddressField(null=True, blank=True,
         verbose_name="Ethernet MAC")
     wlan_mac = MACAddressField(null=True, blank=True,
         verbose_name="Wireless MAC")
-    auto_dns = models.NullBooleanField(null=True, blank=True, default=True,
-        verbose_name="Auto manage DNS", help_text="Upon saving, automatically "
-        "create an A record and a PTR record for this hostname.")
 
     latitude = models.FloatField(null=True, blank=True,
         help_text="Decimal (e.g., 00.0000)")
@@ -77,21 +70,53 @@ class Host(models.Model):
     def get_absolute_url(self):
         return ('portal.views.host_detail', [self.name,])
 
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            orig_name = Host.objects.get(pk=self.pk).name
+        else:
+            orig_name = None
+
+        super(Host, self).save(*args, **kwargs)
+
+        if orig_name and orig_name != self.name:
+            for ipaddress in self.ipaddresses.all():
+                ipaddress.save()
+
+
+class IPAddress(models.Model):
+    host = models.ForeignKey(Host, related_name='ipaddresses')
+    interface = models.CharField(max_length=63, null=True, blank=True,
+        validators=[hostname_validator],
+        help_text="Leave blank for no interface subdomain.")
+    ip = IPAddressField(verbose_name="IP Address")
+    auto_dns = models.NullBooleanField(null=True, blank=True, default=True,
+        verbose_name="Auto manage DNS", help_text="Upon saving, automatically "
+        "create an A record and a PTR record for this address.")
+
+    def __unicode__(self):
+        return "%s (%s)" % (self.fqdn(), self.ip)
+
+    def fqdn(self):
+        if self.interface:
+            return "%s.%s.hamwan.net" % (self.interface, self.host.name)
+        else:
+            return "%s.hamwan.net" % (self.host.name)
+
     def _add_dns(self):
         """adds new A and PTR records"""
         new_dns = Record(
             domain=Domain.objects.get(name='hamwan.net'),
             name=self.fqdn().lower(),
             type='A',
-            content=(self.eth_ipv4 or self.wlan_ipv4),
+            content=self.ip,
             auth=True,
         )
         new_dns.save()
 
     def _remove_dns(self):
-        """removes old DNS records"""
+        """removes old A records"""
         if self.pk is not None:
-            orig = Host.objects.get(pk=self.pk)
+            orig = IPAddress.objects.get(pk=self.pk)
             try:
                 orig_a = Record.objects.filter(
                     name__iexact=orig.fqdn(), type='A')
@@ -104,7 +129,7 @@ class Host(models.Model):
     def delete(self):
         if self.auto_dns:
             self._remove_dns()
-        super(Host, self).delete()
+        super(IPAddress, self).delete()
 
     def save(self, *args, **kwargs):
         if self.auto_dns:
@@ -112,15 +137,19 @@ class Host(models.Model):
             self._remove_dns()
             self._add_dns()
 
-        super(Host, self).save(*args, **kwargs)
+        super(IPAddress, self).save(*args, **kwargs)
 
     def ping(self):
         """ICMP ping the host"""
         return 0 == subprocess.call(
-            "ping -c 1 %s" % (self.eth_ipv4 or self.wlan_ipv4),
+            "ping -c 1 %s" % (self.ip),
             shell=True,
             stdout=open('/dev/null', 'w'),
             stderr=subprocess.STDOUT)
+
+    class Meta:
+        verbose_name = "IP Address"
+        verbose_name_plural = "IP Addresses"
 
 
 class Subnet(models.Model):
