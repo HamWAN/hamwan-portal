@@ -165,6 +165,7 @@ class IPAddress(models.Model):
             stderr=subprocess.STDOUT)
 
     class Meta:
+        ordering = ['ip']
         verbose_name = "IP Address"
         verbose_name_plural = "IP Addresses"
 
