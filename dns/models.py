@@ -70,10 +70,10 @@ class Record(models.Model):
             return "%s %s %s %s" % (name, command, self.type, self.content)
 
     def _generate_ampr_dns_add(self):
-        self._generate_ampr_dns('ADD')
+        return self._generate_ampr_dns('ADD')
 
     def _generate_ampr_dns_del(self):
-        self._generate_ampr_dns('DEL')
+        return self._generate_ampr_dns('DEL')
 
     def _save_ampr_dns_command(self, command=None):
         with open(AMPR_DNS_QUEUE, 'a') as f:
@@ -86,7 +86,8 @@ class Record(models.Model):
             AMPR_DNS_FROM, [AMPR_DNS_TO], fail_silently=False)
 
     def save(self, *args, **kwargs):
-        self._save_ampr_dns_command()
+        if self.name.endswith('hamwan.net') and self.type in ('A', 'CNAME'):
+            self._save_ampr_dns_command()
         super(Record, self).save(*args, **kwargs)
 
     class Meta:
