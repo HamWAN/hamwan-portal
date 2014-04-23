@@ -102,16 +102,28 @@ class IPAddress(models.Model):
         else:
             return "%s.hamwan.net" % (self.host.name)
 
+    def _generate_ptr(self, domain=False):
+        rev = str(self.ip).split('.')[::-1]
+        return "%s.in-addr.arpa" % '.'.join(rev[1:] if domain else rev)
+
     def _add_dns(self):
-        """adds new A and PTR records"""
-        new_dns = Record(
+        """adds or updates A and PTR records"""
+        new_a, created = Record.objects.get_or_create(
             domain=Domain.objects.get(name='hamwan.net'),
             name=self.fqdn().lower(),
             type='A',
             content=self.ip,
-            auth=True,
+            defaults={'auth': True},
         )
-        new_dns.save()
+        new_a.save()
+
+        new_ptr, created = Record.objects.get_or_create(
+            domain=Domain.objects.get(name=self._generate_ptr(domain=True)),
+            name=self._generate_ptr(),
+            type='PTR',
+            defaults={'content': self.fqdn().lower(), 'auth': True},
+        )
+        new_ptr.save()
 
     def _remove_dns(self):
         """removes old A records"""
@@ -122,7 +134,13 @@ class IPAddress(models.Model):
                     name__iexact=orig.fqdn(), type='A')
                 for record in orig_a:
                     record.delete()
-                # TODO: should we remove old PTR too, or solve with SQL trigger?
+            except Record.DoesNotExist:
+                pass
+            try:
+                orig_ptr = Record.objects.filter(
+                    name=orig._generate_ptr(), type='PTR')
+                for record in orig_ptr:
+                    record.delete()
             except Record.DoesNotExist:
                 pass
 
@@ -134,7 +152,6 @@ class IPAddress(models.Model):
     def save(self, *args, **kwargs):
         if self.auto_dns:
             # update DNS records
-            self._remove_dns()
             self._add_dns()
 
         super(IPAddress, self).save(*args, **kwargs)
