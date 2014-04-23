@@ -8,7 +8,10 @@
 # into your database.
 from __future__ import unicode_literals
 
+from django.core.mail import send_mail
 from django.db import models
+
+from hamwanadmin.settings import AMPR_DNS_FROM, AMPR_DNS_TO, AMPR_DNS_QUEUE
 
 
 RECORD_TYPES = [(a, a) for a in ('A', 'CNAME', 'NS', 'PTR', 'SOA', 'SRV')]
@@ -60,6 +63,31 @@ class Record(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def _generate_ampr_dns(self, command):
+        if self.name.endswith('hamwan.net') and self.type in ('A', 'CNAME'):
+            name = self.name.split('.net')[0]
+            return "%s %s %s %s" % (name, command, self.type, self.content)
+
+    def _generate_ampr_dns_add(self):
+        self._generate_ampr_dns('ADD')
+
+    def _generate_ampr_dns_del(self):
+        self._generate_ampr_dns('DEL')
+
+    def _save_ampr_dns_command(self, command=None):
+        with open(AMPR_DNS_QUEUE, 'a') as f:
+            f.write("%s\n" % self._generate_ampr_dns_add())
+
+    def _send_ampr_dns_command(self, command=None):
+        delete = self._generate_ampr_dns_del()
+        add = self._generate_ampr_dns_add()
+        send_mail('HamWAN DNS update', '\n'.join([delete, add]),
+            AMPR_DNS_FROM, [AMPR_DNS_TO], fail_silently=False)
+
+    def save(self, *args, **kwargs):
+        self._save_ampr_dns_command()
+        super(Record, self).save(*args, **kwargs)
 
     class Meta:
         db_table = 'records'
