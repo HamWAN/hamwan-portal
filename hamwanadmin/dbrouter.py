@@ -15,7 +15,6 @@ class DnsRouter(object):
         Attempts to write dns models go to pdns.
         """
         if model._meta.app_label == 'dns':
-            return False
             return 'pdns'
         return None
 
@@ -34,7 +33,6 @@ class DnsRouter(object):
         database.
         """
         if db == 'pdns':
-            return False
             return model._meta.app_label == 'dns'
         elif model._meta.app_label == 'dns':
             return False
