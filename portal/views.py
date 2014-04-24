@@ -1,7 +1,9 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils.decorators import method_decorator
+from django.views.generic.edit import DeleteView
 
 from models import Host, Subnet
 from forms import UserHostForm, UserForm, SubnetForm
@@ -67,6 +69,24 @@ def host_detail(request, name=None):
         'form': form,
         'can_edit': can_edit,
     })
+
+
+class HostDelete(DeleteView):
+    model = Host
+    slug_field = 'name'
+    success_url = '/host/'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(HostDelete, self).dispatch(*args, **kwargs)
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(HostDelete, self).get_object()
+
+        if obj.owner != self.request.user:
+            raise Http404
+        return obj
 
 
 @login_required
