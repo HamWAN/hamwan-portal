@@ -53,7 +53,7 @@ class Record(models.Model):
     id = models.AutoField(primary_key=True)
     domain = models.ForeignKey(Domain, null=True, blank=True)
     name = models.CharField(max_length=255, blank=True)
-    type = models.CharField(max_length=10, blank=True, choices=RECORD_TYPES)
+    type = models.CharField(max_length=10, blank=True)
     content = models.CharField(max_length=65535, blank=True)
     ttl = models.IntegerField(null=True, blank=True, verbose_name="TTL")
     prio = models.IntegerField(null=True, blank=True)
