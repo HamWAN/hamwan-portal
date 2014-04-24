@@ -28,7 +28,7 @@ class Command(BaseCommand):
                 to_ampr.append(line)
 
         if to_ampr:
-            send_mail('HamWAN DNS update', ''.join(to_ampr),
+            send_mail('HamWAN DNS update', ''.join(set(to_ampr)),
                 AMPR_DNS_FROM, [AMPR_DNS_TO], fail_silently=False)
 
         with open(AMPR_DNS_QUEUE, 'w') as f:
