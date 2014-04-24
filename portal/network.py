@@ -7,6 +7,10 @@ from django.forms import fields, widgets
 from django.db import models
 
 
+def reverse(ip):
+    return "%s.in-addr.arpa" % '.'.join(str(ip).split('.')[::-1])
+
+
 class IPNetworkWidget(widgets.TextInput):
     def render(self, name, value, attrs=None):
         if isinstance(value, _IPAddrBase):

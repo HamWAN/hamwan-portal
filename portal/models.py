@@ -7,7 +7,7 @@ from django.core.validators import RegexValidator
 from dns.models import Record, Domain
 
 from fields import MACAddressField
-from network import IPAddressField, IPNetworkField, IPNetworkQuerySet
+from network import reverse, IPAddressField, IPNetworkField, IPNetworkQuerySet
 
 
 domain_validator = RegexValidator(
@@ -195,6 +195,12 @@ class Subnet(models.Model):
                 raise ValidationError('Network overlaps with %s (%s)' % (
                     subnet, subnet.notes_short()
                 ))
+
+    def get_all_reverse(self):
+        ret = []
+        for ip in self.network.iterhosts():
+            ret.append(reverse(ip))
+        return ret
 
     def max(self):
         return max(self.network)

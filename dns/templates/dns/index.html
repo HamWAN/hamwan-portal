@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% load portal %}
+{% block content %}
+
+<h2 class="sub-header">All DNS records</h2>
+{% include "dns/recordtable.html" with records=all_dns %}
+
+{% endblock %}

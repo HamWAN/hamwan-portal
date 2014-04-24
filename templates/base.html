@@ -89,6 +89,11 @@
         <div class="col-sm-3 col-md-2 sidebar">
 {% if request.user.is_authenticated %}
           <ul class="nav nav-sidebar">
+            <li class="{% active 'record_create' %}">
+                 <a href="{% url 'record_create' %}">Create DNS record</a>
+            </li>
+          </ul>
+          <ul class="nav nav-sidebar">
             <li class="{% active 'portal.views.index' %}">
                  <a href="{% url 'portal.views.index' %}">All Yo' Stuff</a>
             </li>
@@ -98,6 +103,9 @@
             <li class="{% active 'portal.views.own_subnets' %}">
                  <a href="{% url 'portal.views.own_subnets' %}">Your Subnets</a>
             </li>
+            <li class="{% active 'dns.views.own_dns' %}">
+                 <a href="{% url 'dns.views.own_dns' %}">Your DNS records</a>
+            </li>
           </ul>
 {% endif %}
           <ul class="nav nav-sidebar">
@@ -106,6 +114,9 @@
             </li>
             <li class="{% active 'portal.views.all_subnets' %}">
                  <a href="{% url 'portal.views.all_subnets' %}">All Subnets</a>
+            </li>
+            <li class="{% active 'dns.views.all_dns' %}">
+                 <a href="{% url 'dns.views.all_dns' %}">All DNS records</a>
             </li>
           </ul>
         </div>
@@ -280,5 +291,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+{% block extrascript %}{% endblock %}
   </body>
 </html>
