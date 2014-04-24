@@ -2,7 +2,7 @@
 {% load addcss from addcss %}
 {% block content %}
 
-<h1 class="page-header">{% if can_edit %}Edit {% endif %}{{ host }}</h1>
+<h1 class="page-header">{{ host|default:"New" }}</h1>
 
 <style>
 input[type="checkbox"].form-control {
@@ -38,10 +38,10 @@ input[type="checkbox"].form-control {
         </div>
     {% endif %}
 {% endfor %}
-{% if can_edit %}
+{% if can_edit or not host %}
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-primary" >Submit</button>
+        <button type="submit" class="btn btn-primary">Save</button>
     </div>
 </div>
 {% endif %}

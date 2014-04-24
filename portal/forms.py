@@ -22,6 +22,7 @@ class UserHostForm(HostForm):
         user_qs = User.objects.order_by('username')
         self.fields['admins'].queryset = user_qs
         self.fields['owner'].queryset = user_qs
+        self.fields['owner'].initial = self.request.user
 
     def clean_name(self):
         """Require hostname to start with callsign"""

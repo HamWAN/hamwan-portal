@@ -44,18 +44,18 @@ def own_subnets(request):
 
 
 @login_required
-def host_detail(request, name):
-    host = Host.objects.get(name=name)
+def host_detail(request, name=None):
+    host = name and Host.objects.get(name=name) or None
     form = UserHostForm(instance=host, request=request)
 
-    if host.owner == request.user \
+    if host is None or host.owner == request.user \
     or request.user in host.admins.all():
         can_edit = True
         if request.method == "POST":
             form = UserHostForm(request.POST, instance=host, request=request)
             if form.is_valid():
                 form.save()
-                messages.success(request, '%s saved.' % host)
+                messages.success(request, '%s saved.' % form.cleaned_data['name'])
                 return HttpResponseRedirect('/')
             else:
                 messages.warning(request, 'Form validation error. Details below.')
