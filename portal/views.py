@@ -114,6 +114,25 @@ def subnet_detail(request, network):
     })
 
 
+class SubnetDelete(DeleteView):
+    model = Subnet
+    slug_field = 'network'
+    success_url = '/subnet/'
+    template_name = 'portal/host_confirm_delete.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(SubnetDelete, self).dispatch(*args, **kwargs)
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(SubnetDelete, self).get_object()
+
+        if obj.owner != self.request.user:
+            raise Http404
+        return obj
+
+
 @login_required
 def user_detail(request):
     if request.method == "POST":
