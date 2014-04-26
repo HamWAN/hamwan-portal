@@ -59,7 +59,8 @@ class Record(models.Model):
     prio = models.IntegerField(null=True, blank=True)
     change_date = models.IntegerField(null=True, blank=True)
     ordername = models.CharField(max_length=255, blank=True)
-    auth = models.NullBooleanField(null=True, blank=True)
+    auth = models.NullBooleanField(null=True, blank=True, default=True,
+        verbose_name="Authoritative")
 
     def __unicode__(self):
         return self.name
