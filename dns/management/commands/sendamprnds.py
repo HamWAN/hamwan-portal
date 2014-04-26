@@ -10,14 +10,18 @@ from hamwanadmin.settings import AMPR_DNS_FROM, AMPR_DNS_TO, AMPR_DNS_QUEUE
 
 class Command(BaseCommand):
     help = 'Sends queued AMPR DNS robot commands'
+    ampr_hosts = []
 
     def handle(self, *args, **options):
-        self.get_ampr_hosts()
         to_ampr = []
         with open(AMPR_DNS_QUEUE, 'r') as f:
             for line in f.readlines():
                 split = line.split()
                 pair = (split[-1], split[0])
+
+                # download ampr host file only during first iteration
+                if not self.ampr_hosts:
+                    self.get_ampr_hosts()
 
                 if pair in self.ampr_hosts:
                     # exists, skipping
