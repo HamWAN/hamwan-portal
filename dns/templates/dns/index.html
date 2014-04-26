@@ -2,7 +2,8 @@
 {% load portal %}
 {% block content %}
 
-<h2 class="sub-header">All DNS records</h2>
-{% include "dns/recordtable.html" with records=all_dns %}
+<h2 class="sub-header">All DNS records <small><span class="label label-default">{{ page_obj.paginator.count }} records</span></small></h2>
+{% include "dns/recordtable.html" with records=object_list %}
+{% include "pager.html" %}
 
 {% endblock %}

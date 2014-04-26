@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.db.models import Q
 
+from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from models import Record
@@ -75,10 +76,10 @@ class RecordDelete(DeleteView):
         return obj
 
 
-def all_dns(request):
-    return render(request, 'dns/index.html', {
-        'all_dns':  Record.objects.select_related('owner').all(),
-    })
+class RecordListView(ListView):
+    model = Record
+    template_name = 'dns/index.html'
+    paginate_by = 200
 
 
 @login_required
