@@ -1,17 +1,18 @@
+{% load append_to_get from navigation %}
 {% if is_paginated %}
     <ul class="pagination">
     {% if page_obj.has_previous %}
-        <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        <li><a href="{% append_to_get page=page_obj.previous_page_number %}">&laquo;</a></li>
     {% endif %}
     {% for number in page_obj.paginator.page_range %}
         {% if number == page_obj.number %}
         <li class="active"><a href="#">{{ page_obj.number }}</a></li>
         {% else %}
-        <li><a href="?page={{ number }}">{{ number }}</a></li>
+        <li><a href="{% append_to_get page=number %}">{{ number }}</a></li>
         {% endif %}
     {% endfor %}
     {% if page_obj.has_next %}
-        <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        <li><a href="{% append_to_get page=page_obj.next_page_number %}">&raquo;</a></li>
     {% endif %}
     </ul>
 {% endif %}
