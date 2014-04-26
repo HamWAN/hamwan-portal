@@ -16,6 +16,8 @@
       <td>{{ record.content }}</td>
       <td>{{ record.ttl }}</td>
     </tr>
+{% empty %}
+    <tr><td colspan="4">No matching records found.</td></tr>
 {% endfor %}
   </tbody>
 </table>
