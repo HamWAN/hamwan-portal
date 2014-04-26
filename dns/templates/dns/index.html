@@ -2,7 +2,30 @@
 {% load portal %}
 {% block content %}
 
-<h2 class="sub-header">All DNS records <small><span class="label label-default">{{ page_obj.paginator.count }} records</span></small></h2>
+<div class="col-sm-5 pull-right" style="padding-right:0;">
+  <form id="search_form" method="GET">
+    <div class="input-group">
+        <input type="text" name="q" class="form-control input-sm" value="{{ request.GET.q }}" placeholder="Search">
+        <input type="hidden" id="type" name="type" value="{{ request.GET.type }}">
+        <div class="input-group-btn">
+          <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+            {{ request.GET.type|default:"Type" }} <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu pull-right" role="menu">
+            <li><a href="#" onclick="$('#type').val(''); $('#search_form').submit()">All</a></li>
+            <li class="divider"></li>
+            {% with 'A CNAME NS PTR' as types %}{% for type in types.split %}
+            <li{% if type == request.GET.type %} class="active"{% endif %}>
+              <a href="#" onclick="$('#type').val('{{ type }}'); $('#search_form').submit()">{{ type }}</a>
+            </li>{% endfor %}{% endwith%}
+          </ul>
+        <button type="button" class="btn btn-default btn-sm disabled">{{ page_obj.paginator.count }} record{{ page_obj.paginator.count|pluralize }}</button>
+        </div>
+    </div>
+  </form>
+</div>
+<h2 class="sub-header">All DNS records
+</h2>
 {% include "dns/recordtable.html" with records=object_list %}
 {% include "pager.html" %}
 

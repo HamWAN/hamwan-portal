@@ -81,6 +81,18 @@ class RecordListView(ListView):
     template_name = 'dns/index.html'
     paginate_by = 200
 
+    def get_queryset(self):
+        type = self.request.GET.get('type')
+        q = self.request.GET.get('q')
+
+        qs = self.model.objects.all()
+
+        if type:
+            qs = qs.filter(type=type)
+        if q:
+            qs = qs.filter(Q(name__icontains=q)|Q(content__icontains=q))
+        return qs
+
 
 @login_required
 def own_dns(request):
