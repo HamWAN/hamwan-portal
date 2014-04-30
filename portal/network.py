@@ -5,6 +5,7 @@ from django.forms import ValidationError as FormValidationError
 from django.core.exceptions import ValidationError
 from django.forms import fields, widgets
 from django.db import models
+from django.core.validators import validate_ipv46_address
 
 
 def reverse(ip):
@@ -107,6 +108,7 @@ class IPNetworkField(models.Field):
 class IPAddressField(models.Field):
     __metaclass__ = models.SubfieldBase
     description = "IP Address Field with IPv6 support"
+    default_validators = [validate_ipv46_address]
     
     def db_type(self, connection):
         return 'varchar(42)'
@@ -121,6 +123,7 @@ class IPAddressField(models.Field):
         try:
             return IPAddress(value.encode('latin-1'))
         except Exception, e:
+            return value
             raise ValidationError(e)
 
     def get_prep_lookup(self, lookup_type, value):

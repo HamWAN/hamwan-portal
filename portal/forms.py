@@ -1,9 +1,9 @@
-from ipaddr import IPAddress
+import ipaddr
 
 from django import forms
 from django.contrib.auth.models import User
 
-from models import Host, Subnet
+from models import Host, IPAddress, Subnet
 
 
 class HostForm(forms.ModelForm):
@@ -37,6 +37,28 @@ class UserHostForm(HostForm):
         if name != user and not name.endswith('.%s' % user):
             raise forms.ValidationError("Name must end with %s." % user)
         return self.cleaned_data['name']
+
+
+class IPAddressForm(forms.ModelForm):
+    class Meta:
+        model = IPAddress
+
+
+class UserIPAddressForm(IPAddressForm):
+    """Allows users to edit their IPAddress details."""
+    def clean_ip(self):
+        """Require IP address to be in user's subnet"""
+        subnets = Subnet.objects.filter(owner=self.instance.host.owner)
+
+        try:
+            ip = ipaddr.IPAddress(self.cleaned_data['ip'])
+        except ValueError, e:
+            raise forms.ValidationError(e)
+
+        if not any([ip in subnet.network for subnet in subnets]):
+            raise forms.ValidationError('Address must be in your subnet.')
+
+        return ip
 
 
 class SubnetForm(forms.ModelForm):

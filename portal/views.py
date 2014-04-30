@@ -2,11 +2,12 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.forms.models import inlineformset_factory
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import DeleteView
 
-from models import Host, Subnet
-from forms import UserHostForm, UserForm, SubnetForm
+from models import Host, IPAddress, Subnet
+from forms import UserHostForm, UserForm, UserIPAddressForm, SubnetForm
 
 
 @login_required
@@ -49,14 +50,19 @@ def own_subnets(request):
 def host_detail(request, name=None):
     host = name and Host.objects.get(name=name) or None
     form = UserHostForm(instance=host, request=request)
+    IPAddressFormSet = inlineformset_factory(Host, IPAddress,
+        form=UserIPAddressForm, extra=2)
+    ipformset = IPAddressFormSet(instance=host)
 
     if host is None or host.owner == request.user \
     or request.user in host.admins.all():
         can_edit = True
         if request.method == "POST":
             form = UserHostForm(request.POST, instance=host, request=request)
-            if form.is_valid():
+            ipformset = IPAddressFormSet(request.POST, instance=host)
+            if form.is_valid() and ipformset.is_valid():
                 form.save()
+                ipformset.save()
                 messages.success(request, '%s saved.' % form.cleaned_data['name'])
                 return HttpResponseRedirect('/')
             else:
@@ -67,6 +73,7 @@ def host_detail(request, name=None):
     return render(request, 'portal/edit_host.html', {
         'host': host,
         'form': form,
+        'ipformset': ipformset,
         'can_edit': can_edit,
     })
 
