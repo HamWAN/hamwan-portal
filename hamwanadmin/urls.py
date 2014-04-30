@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.contrib.auth import views as auth_views
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -12,16 +13,16 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login'),
     url(r'^accounts/profile/$', 'portal.views.user_detail'),
-    url(r'^accounts/password/change/$',
-        'django.contrib.auth.views.password_change'),
-    url(r'^accounts/password/change/done/$',
-        'django.contrib.auth.views.password_change_done'),
-    url(r'^accounts/password/reset/$',
-        'django.contrib.auth.views.password_reset'),
-    url(r'^accounts/password/reset/done/$',
-        'django.contrib.auth.views.password_reset_done'),
-    url(r'^accounts/password/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
-        'django.contrib.auth.views.password_reset_confirm'),
-    url(r'^accounts/password/done/$',
-        'django.contrib.auth.views.password_reset_complete'),
+    url(r'^password/change/$',
+        auth_views.password_change, name='password_change'),
+    url(r'^password/change/done/$',
+        auth_views.password_change_done, name='password_change_done'),
+    url(r'^password/reset/$',
+        auth_views.password_reset, name='password_reset'),
+    url(r'^password/reset/done/$',
+        auth_views.password_reset_done, name='password_reset_done'),
+    url(r'^password/reset/complete/$',
+        auth_views.password_reset_complete, name='password_reset_complete'),
+    url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+        auth_views.password_reset_confirm, name='password_reset_confirm'),
 )
