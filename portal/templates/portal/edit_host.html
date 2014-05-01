@@ -30,7 +30,7 @@ input[type="checkbox"].form-control {
                 <label class="control-label" for="{{ field.auto_id }}">{{ field.label }}</label>
                 <div class="input-group">
                     {{ field|addcss:"form-control" }}
-                    <span class="input-group-addon">.{{ form.instance.fqdn|default:"hostname.user.hamwan.net" }}</span>
+                    <span class="input-group-addon">.{{ form.instance.host.fqdn|default:"hostname.user.hamwan.net" }}</span>
                 </div>
                 <span class="text-danger small">{% for error in field.errors %}{{ error }}{% endfor %}</span>
                 <span class="help-block small">{{ field.help_text }}</span>
