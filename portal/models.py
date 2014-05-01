@@ -177,8 +177,8 @@ class Subnet(models.Model):
 
     owner = models.ForeignKey('auth.User', null=True, blank=True,
         related_name="subnets_owned", help_text="Warning: changing this field "
-        "could affect your ability to administer this server record.")
-    network = IPNetworkField()
+        "could affect your ability to administer this subnet record.")
+    network = IPNetworkField(unique=True)
     notes = models.TextField(blank=True)
 
     def __unicode__(self):
