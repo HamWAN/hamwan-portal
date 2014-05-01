@@ -186,15 +186,10 @@ class Subnet(models.Model):
 
     def clean(self):
         # convert slop like 10.0.1.0/22 to 10.0.0.0/22
-        self.network.ip = self.network.network
-
-        # no subnet overlaps allowed
-        other_subnets = Subnet.objects.exclude(id=self.id)
-        for subnet in other_subnets:
-            if self.network in subnet.network or subnet.network in self.network:
-                raise ValidationError('Network overlaps with %s (%s)' % (
-                    subnet, subnet.notes_short()
-                ))
+        try:
+            self.network.ip = self.network.network
+        except AttributeError, e:
+            raise ValidationError('Could not save network.')
 
     def get_all_reverse(self):
         ret = []

@@ -64,7 +64,31 @@ class UserIPAddressForm(IPAddressForm):
 class SubnetForm(forms.ModelForm):
     class Meta:
         model = Subnet
-        fields = ['notes']
+
+
+class UserSubnetForm(SubnetForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(UserSubnetForm, self).__init__(*args, **kwargs)
+
+        user_qs = User.objects.order_by('username')
+        self.fields['owner'].queryset = user_qs
+        self.fields['owner'].initial = self.request.user
+
+    def clean_network(self):
+        """Require network to be in user's subnet"""
+        subnets = Subnet.objects.filter(owner=self.request.user)
+
+        try:
+            net = ipaddr.IPNetwork(self.cleaned_data['network'])
+        except ValueError, e:
+            raise forms.ValidationError(e)
+
+        if not any([net in subnet.network for subnet in subnets]):
+            raise forms.ValidationError('Network must be in your subnet.')
+
+        return net
+
 
 
 class UserForm(forms.ModelForm):

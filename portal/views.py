@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.forms.models import inlineformset_factory
@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic.edit import DeleteView
 
 from models import Host, IPAddress, Subnet
-from forms import UserHostForm, UserForm, UserIPAddressForm, SubnetForm
+from forms import UserHostForm, UserForm, UserIPAddressForm, UserSubnetForm
 
 
 @login_required
@@ -97,17 +97,17 @@ class HostDelete(DeleteView):
 
 
 @login_required
-def subnet_detail(request, network):
-    subnet = Subnet.objects.get(network=network)
-    form = SubnetForm(instance=subnet)
+def subnet_detail(request, network=None):
+    subnet = network and get_object_or_404(Subnet, network=network) or None
+    form = UserSubnetForm(instance=subnet, request=request)
 
-    if subnet.owner == request.user:
+    if network is None or subnet.owner == request.user:
         can_edit = True
         if request.method == "POST":
-            form = SubnetForm(request.POST, instance=subnet)
+            form = UserSubnetForm(request.POST, instance=subnet, request=request)
             if form.is_valid():
                 form.save()
-                messages.success(request, '%s saved.' % subnet)
+                messages.success(request, '%s saved.' % form.cleaned_data['network'])
                 return HttpResponseRedirect('/')
             else:
                 messages.warning(request, 'Form validation error. Details below.')
