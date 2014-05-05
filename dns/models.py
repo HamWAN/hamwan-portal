@@ -65,6 +65,10 @@ class Record(models.Model):
     def __unicode__(self):
         return self.name
 
+    def clean(self):
+        self.name = self.name.lower()
+        self.content = self.content.lower()
+
     def _generate_ampr_dns(self, command):
         if self.name.endswith('hamwan.net') and self.type in ('A', 'CNAME'):
             name = self.name.split('.net')[0]
