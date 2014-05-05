@@ -85,8 +85,8 @@ class Host(models.Model):
 
 class IPAddress(models.Model):
     host = models.ForeignKey(Host, related_name='ipaddresses')
-    interface = models.CharField(max_length=63, null=True, blank=True,
-        validators=[hostname_validator],
+    interface = models.CharField(max_length=242, null=True, blank=True,
+        validators=[domain_validator],
         help_text="Leave blank for no interface subdomain.")
     ip = IPAddressField(verbose_name="IP Address")
     auto_dns = models.NullBooleanField(null=True, blank=True, default=True,
