@@ -117,13 +117,18 @@ class IPAddress(models.Model):
         )
         new_a.save()
 
-        new_ptr, created = Record.objects.get_or_create(
-            domain=Domain.objects.get(name=self._generate_ptr(domain=True)),
-            name=self._generate_ptr(),
-            type='PTR',
-            defaults={'content': self.fqdn().lower(), 'auth': True},
-        )
-        new_ptr.save()
+        try:
+            new_ptr, created = Record.objects.get_or_create(
+                domain=Domain.objects.get(name=self._generate_ptr(domain=True)),
+                name=self._generate_ptr(),
+                type='PTR',
+                defaults={'content': self.fqdn().lower(), 'auth': True},
+            )
+            if not created:
+                new_ptr.content = self.fqdn().lower()
+            new_ptr.save()
+        except Domain.DoesNotExist:
+            pass
 
     def _remove_dns(self):
         """removes old A records"""
