@@ -88,7 +88,7 @@ class IPAddress(models.Model):
     interface = models.CharField(max_length=242, null=True, blank=True,
         validators=[domain_validator],
         help_text="Leave blank for no interface subdomain.")
-    ip = IPAddressField(verbose_name="IP Address")
+    ip = IPAddressField(unique=True, verbose_name="IP Address")
     auto_dns = models.NullBooleanField(null=True, blank=True, default=True,
         verbose_name="Auto manage DNS", help_text="Upon saving, automatically "
         "create an A record and a PTR record for this address.")
