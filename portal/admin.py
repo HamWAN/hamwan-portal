@@ -2,6 +2,17 @@ from models import *
 from django.contrib import admin
 
 
+class IPAddressAdmin(admin.ModelAdmin):
+    list_display = (
+        'host',
+        'ip',
+        'fqdn',
+        'auto_dns',
+    )
+    search_fields = ('ip', )
+admin.site.register(IPAddress, IPAddressAdmin)
+
+
 class IPAddressInline(admin.TabularInline):
     model = IPAddress
     extra = 1
