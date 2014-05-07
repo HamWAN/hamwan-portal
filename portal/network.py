@@ -132,8 +132,7 @@ class IPAddressField(models.Field):
         elif lookup_type == 'in':
             return [self.get_prep_value(v) for v in value]           
         else:
-            raise TypeError('Lookup type %r not supported.' \
-                % lookup_type)
+            return super(IPAddressField, self).get_prep_lookup(lookup_type, value)
 
     def get_prep_value(self, value):
         if isinstance(value, _IPAddrBase):
