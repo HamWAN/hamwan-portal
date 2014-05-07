@@ -19,6 +19,7 @@ input[type="checkbox"].form-control {
     {% include 'form_field.html' %}
 {% endfor %}
 {{ ipformset.management_form }}
+{% if host %}
 {% for form in ipformset %}
 <div class="form-group ipaddress-form">
     <label class="col-sm-2 control-label">{{ form.ip.value|default:"New IP Address" }}</label>
@@ -51,6 +52,7 @@ input[type="checkbox"].form-control {
     {% endfor %}
 </div>
 {% endfor %}
+{% endif %}
 {% if can_edit or not host %}
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">

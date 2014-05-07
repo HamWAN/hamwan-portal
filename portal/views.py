@@ -54,8 +54,17 @@ def host_detail(request, name=None):
         form=UserIPAddressForm, extra=2)
     ipformset = IPAddressFormSet(instance=host)
 
-    if host is None or host.owner == request.user \
-    or request.user in host.admins.all():
+    if host is None:
+        can_edit = True
+        if request.method == "POST":
+            form = UserHostForm(request.POST, instance=host, request=request)
+            if form.is_valid():
+                form.save()
+                messages.success(request, '%s saved. Now add an IP address.' % form.cleaned_data['name'])
+                return HttpResponseRedirect('/host/%s' % form.cleaned_data['name'])
+            else:
+                messages.warning(request, 'Form validation error. Details below.')
+    elif host.owner == request.user or request.user in host.admins.all():
         can_edit = True
         if request.method == "POST":
             form = UserHostForm(request.POST, instance=host, request=request)
