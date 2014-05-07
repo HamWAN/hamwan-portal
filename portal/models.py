@@ -4,6 +4,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 
+from hamwanadmin.settings import DATABASES
 from dns.models import Record, Domain
 
 from fields import MACAddressField
@@ -35,8 +36,21 @@ HOST_TYPES = (
 )
 
 
+class DomainSortManager(models.Manager):
+    def get_query_set(self):
+        if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+            return super(DomainSortManager, self).get_query_set().extra(
+                select={'domain_order':
+                    "array_reverse(regexp_split_to_array(name, '\.'))"},
+                order_by=['owner__username', 'domain_order'])
+        else:
+            return super(DomainSortManager, self).get_query_set()
+
+
 class Host(models.Model):
     """Tracks any asset on the network."""
+    objects = DomainSortManager()
+
     name = models.CharField(max_length=242, unique=True,
         validators=[domain_validator])
     type = models.CharField(max_length=24, choices=HOST_TYPES)
