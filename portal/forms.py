@@ -61,6 +61,17 @@ class UserIPAddressForm(IPAddressForm):
         return ip
 
 
+class IPAddressFormset(forms.models.BaseInlineFormSet):
+    def clean(self):
+        super(IPAddressFormset, self).clean()
+
+        if any(self.errors):
+            return
+
+        if sum([form.cleaned_data.get('primary', False) for form in self.forms]) > 1:
+            raise forms.ValidationError("Only one interface may be primary.")
+
+
 class SubnetForm(forms.ModelForm):
     class Meta:
         model = Subnet

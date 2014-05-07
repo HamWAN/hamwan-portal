@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic.edit import DeleteView
 
 from models import Host, IPAddress, Subnet
-from forms import UserHostForm, UserForm, UserIPAddressForm, UserSubnetForm
+from forms import UserHostForm, UserForm, UserIPAddressForm, IPAddressFormset, UserSubnetForm
 
 
 @login_required
@@ -51,7 +51,7 @@ def host_detail(request, name=None):
     host = name and Host.objects.get(name=name) or None
     form = UserHostForm(instance=host, request=request)
     IPAddressFormSet = inlineformset_factory(Host, IPAddress,
-        form=UserIPAddressForm, extra=2)
+        form=UserIPAddressForm, formset=IPAddressFormset, extra=2)
     ipformset = IPAddressFormSet(instance=host)
 
     if host is None:

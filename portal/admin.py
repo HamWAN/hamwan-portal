@@ -1,4 +1,5 @@
 from models import *
+from forms import IPAddressFormset
 from django.contrib import admin
 
 
@@ -15,6 +16,7 @@ admin.site.register(IPAddress, IPAddressAdmin)
 
 class IPAddressInline(admin.TabularInline):
     model = IPAddress
+    formset = IPAddressFormset
     extra = 1
 
 
