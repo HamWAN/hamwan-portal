@@ -106,6 +106,8 @@ class IPAddress(models.Model):
     auto_dns = models.NullBooleanField(null=True, blank=True, default=True,
         verbose_name="Auto manage DNS", help_text="Upon saving, automatically "
         "create an A record and a PTR record for this address.")
+    primary = models.BooleanField(blank=True,
+        help_text="Create a CNAME from the host to this interface.")
 
     def __unicode__(self):
         return "%s (%s)" % (self.fqdn(), self.ip)
@@ -143,6 +145,17 @@ class IPAddress(models.Model):
             new_ptr.save()
         except Domain.DoesNotExist:
             pass
+
+        if self.primary and self.interface != "":
+            new_cname, created = Record.objects.get_or_create(
+                domain=Domain.objects.get(name='hamwan.net'),
+                name=self.host.fqdn().lower(),
+                type='CNAME',
+                defaults={'content': self.fqdn().lower(), 'auth': True},
+            )
+            if not created:
+                new_cname.content = self.fqdn().lower()
+            new_cname.save()
 
     def _remove_dns(self):
         """removes old A records"""

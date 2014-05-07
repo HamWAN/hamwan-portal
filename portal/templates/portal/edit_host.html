@@ -20,14 +20,17 @@ input[type="checkbox"].form-control {
 {% endfor %}
 {{ ipformset.management_form }}
 {% if host %}
+{% if ipformset.non_form_errors %}
+<div class="alert alert-danger">{{ ipformset.non_form_errors }}</div>
+{% endif %}
 {% for form in ipformset %}
-<div class="form-group ipaddress-form">
+<div class="row">
     <label class="col-sm-2 control-label">{{ form.ip.value|default:"New IP Address" }}</label>
     {% for field in form %}
         {% if field.is_hidden %}
             {{ field }}
         {% elif field.name == form.interface.name %}
-            <div class="col-sm-4{% if field.errors %} has-error{% endif %}">
+            <div class="col-sm-5{% if field.errors %} has-error{% endif %}">
                 <label class="control-label" for="{{ field.auto_id }}">{{ field.label }}</label>
                 <div class="input-group">
                     {{ field|addcss:"form-control" }}
@@ -39,10 +42,16 @@ input[type="checkbox"].form-control {
         {% elif field.name == form.DELETE.name %}{% if form.instance.pk %}
             <div class="col-sm-1">
                 <label class="control-label" for="{{ field.auto_id }}">{{ field.label }}</label>
-                {{ field }}
+                {{ field|addcss:"form-control" }}
             </div>
         {% endif %}{% else %}
-            <div class="col-sm-2{% if field.errors %} has-error{% endif %}">
+            {% if field.name == form.auto_dns.name %}
+        </div>
+        <div class="row form-group">
+            <div class="col-sm-5 col-sm-offset-2{% if field.errors %} has-error{% endif %}">
+            {% else %}
+            <div class="col-sm-3{% if field.errors %} has-error{% endif %}">
+            {% endif %}
                 <label class="control-label" for="{{ field.auto_id }}">{{ field.label }}</label>
                 {{ field|addcss:"form-control" }}
                 <span class="text-danger small">{% for error in field.errors %}{{ error }}{% endfor %}</span>
