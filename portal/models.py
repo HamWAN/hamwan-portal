@@ -11,7 +11,7 @@ from network import reverse, IPAddressField, IPNetworkField, IPNetworkQuerySet
 
 
 domain_validator = RegexValidator(
-    regex=r'^(?=^.{2,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)*[a-zA-Z0-9-]{2,63}$)$',
+    regex=r'^(?=^.{1,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)*[a-zA-Z0-9-]{1,63}$)$',
     message="Enter a valid hostname."
 )
 
