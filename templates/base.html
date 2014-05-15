@@ -68,15 +68,20 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
 {% if request.user.is_authenticated %}
-            <li><a href="{% url 'portal.views.user_detail' %}">Welcome, {{ request.user }}!</a></li>
-            <li><a href="{% url 'django.contrib.auth.views.password_change' %}">Change Password</a></li>
-            {% if request.user.is_staff %}
-            <li><a href="/admin/">Admin</a></li>
-            {% endif %}
-            <li><a href="{% url 'django.contrib.auth.views.logout_then_login' %}">Logout</a></li>
+            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              Welcome, {{ request.user }}! <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'portal.views.user_detail' %}">Edit name/email</a></li>
+                <li><a href="{% url 'django.contrib.auth.views.password_change' %}">Change Password</a></li>
+                <li><a href="{% url 'django.contrib.auth.views.logout_then_login' %}">Logout</a></li>
+              </ul>
+            </li>
 {% else %}
             <li><a href="{% url 'django.contrib.auth.views.login' %}">Login</a></li>
             <li><a href="{% url 'django.contrib.auth.views.password_reset' %}">Reset Password</a></li>
+{% endif %}
+{% if request.user.is_staff %}
+            <li><a href="/admin/">Admin</a></li>
 {% endif %}
           </ul>
         </div>
