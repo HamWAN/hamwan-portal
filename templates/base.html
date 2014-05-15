@@ -1,5 +1,4 @@
 {% load staticfiles %}
-{% load active from navigation %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -67,6 +66,10 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              Portal <span class="caret"></span></a>
+              {% include "portal/nav.html" with class="dropdown-menu" %}
+            </li>
 {% if request.user.is_authenticated %}
             <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">
               Welcome, {{ request.user }}! <span class="caret"></span></a>
@@ -92,44 +95,7 @@
       <div class="row">
 {% block page %}
         <div class="col-sm-3 col-md-2 sidebar">
-{% if request.user.is_authenticated %}
-          <ul class="nav nav-sidebar">
-            <li class="{% active 'portal.views.host_detail' %}">
-                 <a href="{% url 'portal.views.host_detail' %}">Create Host</a>
-            </li>
-            <li class="{% active 'portal.views.subnet_detail' %}">
-                 <a href="{% url 'portal.views.subnet_detail' %}">Create Subnet</a>
-            </li>
-            <li class="{% active 'record_create' %}">
-                 <a href="{% url 'record_create' %}">Create DNS record</a>
-            </li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li class="{% active 'portal.views.index' %}">
-                 <a href="{% url 'portal.views.index' %}">All Yo' Stuff</a>
-            </li>
-            <li class="{% active 'portal.views.own_hosts' %}">
-                 <a href="{% url 'portal.views.own_hosts' %}">Your Hosts</a>
-            </li>
-            <li class="{% active 'portal.views.own_subnets' %}">
-                 <a href="{% url 'portal.views.own_subnets' %}">Your Subnets</a>
-            </li>
-            <li class="{% active 'dns.views.own_dns' %}">
-                 <a href="{% url 'dns.views.own_dns' %}">Your DNS records</a>
-            </li>
-          </ul>
-{% endif %}
-          <ul class="nav nav-sidebar">
-            <li class="{% active 'portal.views.all_hosts' %}">
-                 <a href="{% url 'portal.views.all_hosts' %}">All Hosts</a>
-            </li>
-            <li class="{% active 'portal.views.all_subnets' %}">
-                 <a href="{% url 'portal.views.all_subnets' %}">All Subnets</a>
-            </li>
-            <li class="{% active 'record_list' %}">
-                 <a href="{% url 'record_list' %}">All DNS records</a>
-            </li>
-          </ul>
+          {% include "portal/nav.html" with class="nav nav-sidebar" %}
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 {% if messages %}

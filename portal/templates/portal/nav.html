@@ -1,0 +1,37 @@
+{% load active from navigation %}
+<ul class="{{ class }}">
+    <li class="{% active 'portal.views.all_hosts' %}">
+         <a href="{% url 'portal.views.all_hosts' %}">All Hosts</a>
+    </li>
+    <li class="{% active 'portal.views.all_subnets' %}">
+         <a href="{% url 'portal.views.all_subnets' %}">All Subnets</a>
+    </li>
+    <li class="{% active 'record_list' %}">
+         <a href="{% url 'record_list' %}">All DNS records</a>
+    </li>
+{% if request.user.is_authenticated %}
+    <li class="divider"></li>
+    <li class="{% active 'portal.views.index' %}">
+         <a href="{% url 'portal.views.index' %}">All Yo' Stuff</a>
+    </li>
+    <li class="{% active 'portal.views.own_hosts' %}">
+         <a href="{% url 'portal.views.own_hosts' %}">Your Hosts</a>
+    </li>
+    <li class="{% active 'portal.views.own_subnets' %}">
+         <a href="{% url 'portal.views.own_subnets' %}">Your Subnets</a>
+    </li>
+    <li class="{% active 'dns.views.own_dns' %}">
+         <a href="{% url 'dns.views.own_dns' %}">Your DNS records</a>
+    </li>
+    <li class="divider"></li>
+    <li class="{% active 'portal.views.host_detail' %}">
+         <a href="{% url 'portal.views.host_detail' %}">Create Host</a>
+    </li>
+    <li class="{% active 'portal.views.subnet_detail' %}">
+         <a href="{% url 'portal.views.subnet_detail' %}">Create Subnet</a>
+    </li>
+    <li class="{% active 'record_create' %}">
+         <a href="{% url 'record_create' %}">Create DNS record</a>
+    </li>
+{% endif %}
+</ul>
