@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth import views as auth_views
+from django.contrib.flatpages import views as flatpages_views
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -25,4 +26,5 @@ urlpatterns = patterns('',
         auth_views.password_reset_complete, name='password_reset_complete'),
     url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
         auth_views.password_reset_confirm, name='password_reset_confirm'),
+    url(r'^(?P<url>.*/)$', flatpages_views.flatpage),
 )
