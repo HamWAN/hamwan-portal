@@ -39,10 +39,11 @@ class RecordForm(forms.ModelForm):
            not name.endswith(".%s" % subdomain):
             # name doesn't end with user.hamwan.net, check reverse
             try:
-                ip = self._rev_to_ip(instance.name)
+                ip = self._rev_to_ip(name)
             except ValueError:
                 raise forms.ValidationError("This record isn't yours.")
-            if not any([(ip in subnet.network) for subnet in subnets]):
+            if ip is None or \
+               not any([(ip in subnet.network) for subnet in subnets]):
                 # reverse is not valid either
                 raise forms.ValidationError("Name must end with %s." % subdomain)
 
