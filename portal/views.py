@@ -76,8 +76,8 @@ def own_hosts(request):
     })
 
 
-def all_subnets(request):
-    return render(request, 'portal/index.html', {
+def all_subnets(request, template='portal/index.html'):
+    return render(request, template, {
         'all_subnets':  Subnet.objects.select_related('owner').all(),
     })
 

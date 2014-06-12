@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block page %}
+
+<style>
+#subnets {
+    position: relative;
+}
+.subnet {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #0d0;
+    background-color: rgba(0, 255, 0, 0.2);
+    height: 25px;
+    line-height: 25px;
+    position: absolute;
+    text-align: center;
+    font-size: 9px;
+    color: inherit;
+    text-decoration: none;
+    overflow: hidden;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    -moz-box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    -webkit-box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+.netmask23, .netmask22, .netmask21, .netmask20 {
+    height: 50px;
+    line-height: 50px;
+    border-color: #ddd;
+    background-color: rgba(221, 221, 221, 0.2);
+}
+.netmask22 {
+    height: 100px;
+    line-height: 100px;
+}
+.netmask21 {
+    height: 200px;
+    line-height: 200px;
+}
+.netmask20 {
+    height: 400px;
+    line-height: 400px;
+}
+.orange {
+    border-color: rgb(255, 165, 0);
+    background-color: rgba(255, 165, 0, 0.2);
+}
+.subnet:hover {
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 0 4px rgba(0,0,0,0.8);
+    -moz-box-shadow: 0 0 4px rgba(0,0,0,0.8);
+    -webkit-box-shadow: 0 0 4px rgba(0,0,0,0.8);
+}
+</style>
+
+<div class="main">
+  {% include 'portal/subnet_button.html' %}
+  <h2 class="sub-header">All subnets</h2>
+  <div id="subnets"></div>
+</div>
+
+{% endblock %}
+
+{% block extrascript %}
+<script>
+var subnets = [{% for subnet in all_subnets %}
+    {net: '{{ subnet.network }}',
+     octet: '{{ subnet.network.0 }}'.split('.'),
+     mask: {{ subnet.network.prefixlen }},
+     owner: '{{ subnet.owner }}',
+     notes: '{{ subnet.notes }}',
+    }{% if not forloop.last %},{% endif %}{% endfor %}];
+
+var parent = $('#subnets');
+
+$.each(subnets, function(index, subnet) {
+    console.log(subnet);
+    var top = (subnet.octet[2] - 240) * 25,
+        left = subnet.octet[3] / 2.56,
+        width = Math.pow(2, 32 - (subnet.mask < 24 ? 24 : subnet.mask)) / 2.56,
+        title = subnet.net + ' - ' + subnet.owner;
+    title += subnet.notes ? ' - '+subnet.notes : '';
+    parent.append('<a class="subnet netmask'+subnet.mask+(subnet.owner == 'HamWAN' ? '' : ' orange')+'" style="top:'+top+'px;left:'+left+'%;width:'+width+'%;z-index:'+subnet.mask+';" title="'+title+'" href="/subnet/'+subnet.net+'">'+title+'</a>');
+});
+
+</script>
+{% endblock %}

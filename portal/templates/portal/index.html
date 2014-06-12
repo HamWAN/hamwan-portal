@@ -24,6 +24,7 @@
 {% endif %}
 
 {% if all_subnets %}
+    {% include 'portal/subnet_button.html' %}
     <h2 class="sub-header">All subnets</h2>
     {% subnettable all_subnets %}
 {% endif %}
