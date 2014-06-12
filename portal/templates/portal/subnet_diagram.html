@@ -75,7 +75,6 @@ var subnets = [{% for subnet in all_subnets %}
 var parent = $('#subnets');
 
 $.each(subnets, function(index, subnet) {
-    console.log(subnet);
     var top = (subnet.octet[2] - 240) * 25,
         left = subnet.octet[3] / 2.56,
         width = Math.pow(2, 32 - (subnet.mask < 24 ? 24 : subnet.mask)) / 2.56,
