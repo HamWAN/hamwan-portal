@@ -47,6 +47,22 @@ class DomainSortManager(models.Manager):
             return super(DomainSortManager, self).get_query_set()
 
 
+class Site(models.Model):
+    name = models.CharField(max_length=250, blank=True)
+    latitude = models.FloatField(null=True, blank=True,
+        help_text="Decimal (e.g., 00.0000)")
+    longitude = models.FloatField(null=True, blank=True,
+        help_text="Decimal (e.g., 000.0000)")
+    status = models.CharField(max_length=30, blank=True)
+    comment = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+
 class Host(models.Model):
     """Tracks any asset on the network."""
     objects = DomainSortManager()
@@ -54,6 +70,7 @@ class Host(models.Model):
     name = models.CharField(max_length=242, unique=True,
         validators=[domain_validator])
     type = models.CharField(max_length=24, choices=HOST_TYPES)
+    site = models.ForeignKey(Site, null=True, blank=True)
 
     owner = models.ForeignKey('auth.User', null=True, blank=True,
         related_name="hosts_owned", help_text="Warning: changing this field "

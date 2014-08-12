@@ -10,6 +10,7 @@ class HostForm(forms.ModelForm):
     class Meta:
         model = Host
         # fields = '__all__'  # needed in future version of Django
+        exclude = ['site']
 
 
 class UserHostForm(HostForm):

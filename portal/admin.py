@@ -20,15 +20,21 @@ class IPAddressInline(admin.TabularInline):
     extra = 1
 
 
+admin.site.register(Site)
+
+
 class HostAdmin(admin.ModelAdmin):
     list_display = (
+        'site',
         '__unicode__',
         'owner',
         'get_ips'
     )
-    list_filter = ('owner',)
-    search_fields = ('name',)
+    list_display_links = '__unicode__',
+    list_filter = ('owner', 'site')
+    search_fields = ('name', 'site')
     save_as = True
+    save_on_top = True
     inlines = [IPAddressInline]
 
     def get_ips(self, obj):
