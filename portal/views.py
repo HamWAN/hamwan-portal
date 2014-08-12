@@ -15,15 +15,18 @@ from forms import UserHostForm, UserForm, UserIPAddressForm, IPAddressFormset, U
 @login_required
 def index(request):
     return render(request, 'portal/index.html', {
-        'own_hosts':  Host.objects.select_related('owner').filter(owner=request.user),
-        'authorized_hosts':  Host.objects.select_related('owner').filter(admins=request.user),
+        'own_hosts':  Host.objects.select_related('owner')
+            .prefetch_related('ipaddresses').filter(owner=request.user),
+        'authorized_hosts':  Host.objects.select_related('owner')
+            .prefetch_related('ipaddresses').filter(admins=request.user),
         'own_subnets':  Subnet.objects.select_related('owner').filter(owner=request.user),
     })
 
 
 def all_hosts(request):
     return render(request, 'portal/index.html', {
-        'all_hosts':  Host.objects.select_related('owner').all(),
+        'all_hosts':  Host.objects.select_related('owner')
+            .prefetch_related('ipaddresses').all(),
     })
 
 
@@ -71,8 +74,10 @@ def ansible_hosts(request):
 @login_required
 def own_hosts(request):
     return render(request, 'portal/index.html', {
-        'own_hosts':  Host.objects.select_related('owner').filter(owner=request.user),
-        'authorized_hosts':  Host.objects.select_related('owner').filter(admins=request.user),
+        'own_hosts':  Host.objects.select_related('owner')
+            .prefetch_related('ipaddresses').filter(owner=request.user),
+        'authorized_hosts':  Host.objects.select_related('owner')
+            .prefetch_related('ipaddresses').filter(admins=request.user),
     })
 
 
