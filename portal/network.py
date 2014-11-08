@@ -12,6 +12,10 @@ def reverse(ip):
     return "%s.in-addr.arpa" % '.'.join(str(ip).split('.')[::-1])
 
 
+def validate_ipv46_address_str(value):
+    return validate_ipv46_address(str(value))
+
+
 class IPNetworkWidget(widgets.TextInput):
     def render(self, name, value, attrs=None):
         if isinstance(value, _IPAddrBase):
@@ -108,7 +112,7 @@ class IPNetworkField(models.Field):
 class IPAddressField(models.Field):
     __metaclass__ = models.SubfieldBase
     description = "IP Address Field with IPv6 support"
-    default_validators = [validate_ipv46_address]
+    default_validators = [validate_ipv46_address_str]
     
     def db_type(self, connection):
         return 'varchar(42)'
