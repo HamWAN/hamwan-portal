@@ -247,15 +247,18 @@ class Subnet(models.Model):
 
     def get_all_reverse(self):
         ret = []
-        for ip in self.network.iterhosts():
-            ret.append(reverse(ip))
+        if self.network.version == 4:
+            for ip in self.network.iterhosts():
+                ret.append(reverse(ip))
         return ret
 
     def max(self):
-        return max(self.network)
+        if self.network.version == 4:
+            return max(self.network)
 
     def min(self):
-        return min(self.network)
+        if self.network.version == 4:
+            return min(self.network)
 
     def notes_short(self):
         return self.notes and self.notes.split()[0]

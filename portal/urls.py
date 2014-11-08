@@ -17,7 +17,7 @@ urlpatterns = patterns('',
         {'template': 'portal/subnet_diagram.html'}, name='subnet_diagram'),
     url(r'^subnet/all$', views.all_subnets),
     url(r'^subnet/new$', views.subnet_detail),
-    url(r'^subnet/(?P<network>[0-9/\.]+)/$', views.subnet_detail),
+    url(r'^subnet/(?P<network>[0-9/\.:]+)/$', views.subnet_detail),
     url(r'^subnet/(?P<slug>[0-9/\.]+)/delete/$',
         views.SubnetDelete.as_view(), name="subnet_delete"),
 )
