@@ -17,7 +17,7 @@
           <td><a href="{% url 'portal.views.subnet_detail' subnet %}">{{ subnet }}</a></td>
           <td>{{ subnet.min }}</td>
           <td>{{ subnet.max }}</td>
-          <td>{{ subnet.numhosts }}</td>
+          <td>{{ subnet.numhosts|safe }}</td>
           <td>{{ subnet.notes|truncatewords:3 }}</td>
         </tr>
     {% endfor %}
