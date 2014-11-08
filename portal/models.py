@@ -136,15 +136,20 @@ class IPAddress(models.Model):
             return "%s.hamwan.net" % (self.host.name)
 
     def _generate_ptr(self, domain=False):
-        rev = str(self.ip).split('.')[::-1]
-        return "%s.in-addr.arpa" % '.'.join(rev[1:] if domain else rev)
+        # If domain=True, return a PTR for the /48 or /24
+        if self.ip.version == 6:
+            rev = self.ip.exploded.replace(':', '')[::-1]
+            return "%s.ip6.arpa" % '.'.join(rev[20:] if domain else rev)
+        else:
+            rev = str(self.ip).split('.')[::-1]
+            return "%s.in-addr.arpa" % '.'.join(rev[1:] if domain else rev)
 
     def _add_dns(self):
         """adds or updates A and PTR records"""
         new_a, created = Record.objects.get_or_create(
             domain=Domain.objects.get(name='hamwan.net'),
             name=self.fqdn().lower(),
-            type='A',
+            type=self.ip.version == 6 and 'AAAA' or 'A',
             content=self.ip,
             defaults={'auth': True},
         )
@@ -180,7 +185,7 @@ class IPAddress(models.Model):
             orig = IPAddress.objects.get(pk=self.pk)
             try:
                 orig_a = Record.objects.filter(
-                    name__iexact=orig.fqdn(), type='A')
+                    name__iexact=orig.fqdn(), type__in=['A', 'AAAA'])
                 for record in orig_a:
                     record.delete()
             except Record.DoesNotExist:
