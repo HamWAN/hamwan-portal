@@ -267,6 +267,8 @@ class Subnet(models.Model):
         if self.network.version == 4:
             return self.network.numhosts
         elif self.network.version == 6:
+            if self.network.prefixlen < 64:
+                return "%d networks" % 2**(64 - self.network.prefixlen)
             return "2<sup>%d</sup>" % (128 - self.network.prefixlen)
     numhosts.allow_tags = True
     numhosts.short_description = "Num Hosts"
