@@ -7,6 +7,7 @@
 # Also note: You'll have to insert the output of 'django-admin.py sqlcustom [appname]'
 # into your database.
 from __future__ import unicode_literals
+from datetime import datetime
 
 from django.core.mail import send_mail
 from django.db import models
@@ -57,7 +58,7 @@ class Record(models.Model):
     content = models.CharField(max_length=65535, blank=True)
     ttl = models.IntegerField(null=True, blank=True, verbose_name="TTL")
     prio = models.IntegerField(null=True, blank=True)
-    change_date = models.IntegerField(null=True, blank=True)
+    change_date = models.IntegerField(null=True, editable=False)
     ordername = models.CharField(max_length=255, blank=True)
     auth = models.NullBooleanField(null=True, blank=True, default=True,
         verbose_name="Authoritative")
@@ -90,9 +91,19 @@ class Record(models.Model):
         send_mail('HamWAN DNS update', '\n'.join([delete, add]),
             AMPR_DNS_FROM, [AMPR_DNS_TO], fail_silently=False)
 
+    def update_change_date(self):
+        generated_serial = int(datetime.today().strftime('%Y%m%d') + '01')
+        current_serial = Record.objects.filter(domain=self.domain).aggregate(
+            models.Max('change_date'))['change_date__max']
+        if current_serial < generated_serial or current_serial is None:
+            self.change_date = generated_serial
+        else:
+            self.change_date = current_serial + 1
+
     def save(self, *args, **kwargs):
         if self.name.endswith('hamwan.net') and self.type in ('A', 'CNAME'):
             self._save_ampr_dns_command()
+        self.update_change_date()
         super(Record, self).save(*args, **kwargs)
 
     class Meta:
