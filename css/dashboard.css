@@ -57,12 +57,24 @@ body {
   padding-right: 20px;
   padding-left: 20px;
 }
+.nav li > a > .glyphicon {
+  float: right;
+  font-size: 10px;
+  line-height: 16px;
+}
 .nav-sidebar > .active > a {
   color: #fff;
   background-color: #428bca;
 }
-.nav-sidebar > .divider {
-  margin-bottom: 10px;
+.nav-sidebar > .dropdown-header {
+  margin-top: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #959595;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 
