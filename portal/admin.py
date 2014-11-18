@@ -38,8 +38,9 @@ class HostAdmin(admin.ModelAdmin):
     inlines = [IPAddressInline]
 
     def get_ips(self, obj):
-        return "\n".join([str(a.ip) for a in obj.ipaddresses.all()])
+        return "<br>\n".join([str(a.ip) for a in obj.ipaddresses.all()])
     get_ips.short_description = "IP Addresses"
+    get_ips.allow_tags = True
 admin.site.register(Host, HostAdmin)
 
 
