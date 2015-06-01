@@ -189,7 +189,7 @@ class IPAddress(models.Model):
             new_cname.save()
 
     def _remove_dns(self):
-        """removes old A records"""
+        """removes old A and CNAME records"""
         if self.pk is not None:
             orig = IPAddress.objects.get(pk=self.pk)
             Record.objects.filter(
@@ -197,6 +197,12 @@ class IPAddress(models.Model):
                 type__in=['A', 'AAAA'],
                 content=orig.ip,
             ).delete()
+            if orig.primary:
+                Record.objects.filter(
+                    name__iexact=orig.host.fqdn(),
+                    type='CNAME',
+                    content__iexact=orig.fqdn(),
+                ).delete()
             Record.objects.filter(
                 name=orig._generate_ptr(),
                 type='PTR',
