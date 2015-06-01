@@ -192,20 +192,16 @@ class IPAddress(models.Model):
         """removes old A records"""
         if self.pk is not None:
             orig = IPAddress.objects.get(pk=self.pk)
-            try:
-                orig_a = Record.objects.filter(
-                    name__iexact=orig.fqdn(), type__in=['A', 'AAAA'])
-                for record in orig_a:
-                    record.delete()
-            except Record.DoesNotExist:
-                pass
-            try:
-                orig_ptr = Record.objects.filter(
-                    name=orig._generate_ptr(), type='PTR')
-                for record in orig_ptr:
-                    record.delete()
-            except Record.DoesNotExist:
-                pass
+            Record.objects.filter(
+                name__iexact=orig.fqdn(),
+                type__in=['A', 'AAAA'],
+                content=orig.ip,
+            ).delete()
+            Record.objects.filter(
+                name=orig._generate_ptr(),
+                type='PTR',
+                content__iexact=orig.fqdn(),
+            ).delete()
 
     def delete(self):
         if self.auto_dns:
