@@ -104,6 +104,10 @@ class Host(models.Model):
     def save(self, *args, **kwargs):
         if self.pk is not None:
             orig_name = Host.objects.get(pk=self.pk).name
+            if orig_name and orig_name != self.name:
+                for ipaddress in self.ipaddresses.all():
+                    if ipaddress.auto_dns:
+                        ipaddress._remove_dns()
         else:
             orig_name = None
 
@@ -146,6 +150,11 @@ class IPAddress(models.Model):
 
     def _add_dns(self):
         """adds or updates A and PTR records"""
+        if self.pk:
+            old_name = IPAddress.objects.get(pk=self.pk).fqdn().lower()
+            if old_name != self.fqdn().lower():
+                self._remove_dns()
+
         new_a, created = Record.objects.get_or_create(
             domain=Domain.objects.get(name='hamwan.net'),
             name=self.fqdn().lower(),
