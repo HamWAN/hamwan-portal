@@ -61,6 +61,14 @@ input[type="checkbox"].form-control {
     {% endfor %}
 </div>
 {% endfor %}
+{% with host.hosts as hosts %}
+{% if hosts %}
+<div class="row">
+    <label class="col-sm-2 control-label">Hosts</label>
+    <div class="col-sm-10">{{ hosts }}</div>
+</div>
+{% endif %}
+{% endwith %}
 {% endif %}
 {% if can_edit or not host %}
 <div class="form-group">

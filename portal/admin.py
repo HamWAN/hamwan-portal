@@ -54,4 +54,5 @@ class SubnetAdmin(admin.ModelAdmin):
         'notes_short',
     )
     list_display_links = '__unicode__',
+    readonly_fields = ('hosts', )
 admin.site.register(Subnet, SubnetAdmin)

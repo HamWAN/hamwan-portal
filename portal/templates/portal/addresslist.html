@@ -1,0 +1,9 @@
+{% spaceless %}
+{% for address, in_use in addresses %}
+    {% if in_use %}
+        <a href="{{ in_use.host.get_absolute_url }}">{{ address }} - {{ in_use.host }}</a>
+    {% else %}
+        <span class="text-muted">{{ address }}</span>
+    {% endif %}<br>
+{% endfor %}
+{% endspaceless %}

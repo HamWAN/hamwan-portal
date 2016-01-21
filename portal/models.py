@@ -3,6 +3,7 @@ import subprocess
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.template.loader import render_to_string
 
 from hamwanadmin.settings import DATABASES
 from dns.models import Record, Domain
@@ -262,6 +263,22 @@ class Subnet(models.Model):
             for ip in self.network.iterhosts():
                 ret.append(reverse(ip))
         return ret
+
+    def _hosts_in_use(self):
+        return IPAddress.objects.filter(ip__range=(self.min(), self.max()))
+
+    def _hosts_html(self):
+        if self.network.version == 4:
+            addresses = [a for a in self.network.iterhosts()]
+            in_use = [None] * len(addresses)
+            for host in self._hosts_in_use():
+                try:
+                    in_use[addresses.index(host.ip)] = host
+                except ValueError:
+                    pass
+            return render_to_string('portal/addresslist.html', {
+                'addresses': zip(addresses, in_use)})
+    hosts = property(_hosts_html)
 
     def max(self):
         if self.network.version == 4:
