@@ -5,6 +5,12 @@ from django.core.management.base import BaseCommand, CommandError
 from portal.models import Subnet, IPAddress
 
 
+NETWORKS = map(IPNetwork, [
+    '44.24.240.0/20',
+    '44.25.0.0/16',
+])
+
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -30,7 +36,7 @@ class Command(BaseCommand):
             except ValueError:
                 continue
 
-            if routedst not in IPNetwork('44.24.240.0/20'):
+            if all(routedst not in net for net in NETWORKS):
                 continue
 
             if routedst in subnets:
