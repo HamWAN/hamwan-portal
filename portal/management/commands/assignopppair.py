@@ -68,8 +68,7 @@ class Command(BaseCommand):
                 self.stderr.write("Adding addresses to existing host %s." % new_host.name)
                 new_host = existing[0]
             else:
-                self.stderr.write("Aborting. Use -f to force adding more addresses to an existing host.")
-                return
+                raise CommandError("Aborting. Use -f to force adding more addresses to an existing host.")
         new_host.save()
         self.stderr.write(str(new_host))
         for (name, address) in zip(("first", "second"), hosts):
