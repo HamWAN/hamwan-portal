@@ -23,7 +23,14 @@
     -moz-box-shadow: 0 0 4px rgba(0,0,0,0.1);
     -webkit-box-shadow: 0 0 4px rgba(0,0,0,0.1);
 }
-.netmask23, .netmask22, .netmask21, .netmask20 {
+.netmask23,
+.netmask22,
+.netmask21,
+.netmask20,
+.netmask19,
+.netmask18,
+.netmask17,
+.netmask16 {
     height: 50px;
     line-height: 50px;
     border-color: #ddd;
@@ -40,6 +47,22 @@
 .netmask20 {
     height: 400px;
     line-height: 400px;
+}
+.netmask19 {
+    height: 800px;
+    line-height: 800px;
+}
+.netmask18 {
+    height: 1600px;
+    line-height: 1600px;
+}
+.netmask17 {
+    height: 3200px;
+    line-height: 3200px;
+}
+.netmask16 {
+    height: 6400px;
+    line-height: 6400px;
 }
 .orange {
     border-color: rgb(255, 165, 0);
@@ -73,9 +96,18 @@ var subnets = [{% for subnet in all_subnets %}{% if subnet.network.version = 4 %
     }{% if not forloop.last %},{% endif %}{% endif %}{% endfor %}];
 
 var parent = $('#subnets');
+var rowheight = 25,
+    start = '44.24.240.0'.split('.'),
+    offset = parseInt(start[1]) * 256 + parseInt(start[2]);
+
+console.log(offset);
+
+function calc_top(subnet) {
+    return (parseInt(subnet.octet[1]) * 256 + parseInt(subnet.octet[2]) - offset) * rowheight;
+}
 
 $.each(subnets, function(index, subnet) {
-    var top = (subnet.octet[2] - 240) * 25,
+    var top = calc_top(subnet),
         left = subnet.octet[3] / 2.56,
         width = Math.pow(2, 32 - (subnet.mask < 24 ? 24 : subnet.mask)) / 2.56,
         title = subnet.net + ' - ' + subnet.owner;
