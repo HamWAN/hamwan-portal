@@ -265,7 +265,8 @@ class Subnet(models.Model):
         return ret
 
     def _hosts_in_use(self):
-        return IPAddress.objects.filter(ip__range=(self.min(), self.max()))
+        return IPAddress.objects.raw('SELECT "portal_ipaddress"."id", "portal_ipaddress"."host_id", "portal_ipaddress"."interface", "portal_ipaddress"."ip", "portal_ipaddress"."auto_dns", "portal_ipaddress"."primary" FROM "portal_ipaddress" WHERE "portal_ipaddress"."ip" BETWEEN %s and %s ORDER BY "portal_ipaddress"."ip" ASC;',
+                                     [str(self.min()), str(self.max())])
 
     def _hosts_html(self):
         if self.network.version == 4:
