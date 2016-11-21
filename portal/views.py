@@ -1,5 +1,6 @@
 import json
 
+from django.db import DataError
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -155,7 +156,10 @@ class HostDelete(DeleteView):
 
 @login_required
 def subnet_detail(request, network=None):
-    subnet = network and get_object_or_404(Subnet, network=network) or None
+    try:
+        subnet = network and get_object_or_404(Subnet, network=network) or None
+    except DataError:
+        raise Http404
     form = UserSubnetForm(instance=subnet, request=request)
 
     if network is None or subnet.owner == request.user:
