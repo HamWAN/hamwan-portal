@@ -32,7 +32,7 @@ class HostAdmin(admin.ModelAdmin):
     )
     list_display_links = '__unicode__',
     list_filter = ('owner', 'site')
-    search_fields = ('name', )
+    search_fields = ('name', 'ipaddresses__ip', 'owner__username')
     save_as = True
     save_on_top = True
     inlines = [IPAddressInline]
