@@ -166,8 +166,17 @@ class IPAddress(models.Model):
         new_a.save()
 
         try:
+            domain = Domain.objects.get(name=self._generate_ptr(domain=True))
+        except Domain.DoesNotExist:
+            # One-off fix (hack) to support PTRs in PSDR's /16 because
+            # _generate_ptr(domain=True) only works on /24 PTRs.
+            if str(self.ip).startswith('44.25.'):
+                domain = Domain.objects.get(name='25.44.in-addr.arpa')
+            else:
+                domain = None
+        if domain is not None:
             new_ptr, created = Record.objects.get_or_create(
-                domain=Domain.objects.get(name=self._generate_ptr(domain=True)),
+                domain=domain,
                 name=self._generate_ptr(),
                 type='PTR',
                 defaults={'content': self.fqdn().lower(), 'auth': True},
@@ -175,8 +184,6 @@ class IPAddress(models.Model):
             if not created:
                 new_ptr.content = self.fqdn().lower()
             new_ptr.save()
-        except Domain.DoesNotExist:
-            pass
 
         if self.primary and self.interface != "":
             new_cname, created = Record.objects.get_or_create(
