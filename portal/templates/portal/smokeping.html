@@ -1,0 +1,25 @@
+*** Targets ***
+
+probe = FPing
+
+menu = Top
+title = HamWAN Puget Sound SmokePing
+remark = Welcome to the HamWAN Puget Sound SmokePing site.
+alerts = someloss,somelossrecovery
+
++ Sites
+menu = Sites
+title = Sites
+probe = FPing
+
+{% for site in sites %}
+++ {{ site }}
+menu = {{ site }}
+title = {{ site }}
+{% for host in site.host_set.all %}
++++ {{ host }}
+menu = {{ host }}
+title = {{ host }}
+host = {{ host.fqdn }}
+{% endfor %}
+{% endfor %}

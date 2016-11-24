@@ -9,7 +9,7 @@ from django.forms.models import inlineformset_factory
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import DeleteView
 
-from models import Host, IPAddress, Subnet
+from models import Host, IPAddress, Site, Subnet
 from forms import UserHostForm, UserForm, UserIPAddressForm, IPAddressFormset, UserSubnetForm
 
 
@@ -70,6 +70,12 @@ def ansible_hosts(request):
             else:
                 inventory[group] = [host.fqdn()]
     return HttpResponse(json.dumps(inventory), content_type="application/json")
+
+
+def smokeping(request):
+    return render(request, 'portal/smokeping.html', {
+        'sites':  Site.objects.select_related('host_set').all(),
+    }, content_type='text/plain')
 
 
 @login_required
