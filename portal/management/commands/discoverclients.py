@@ -66,7 +66,7 @@ def walk_sector(self, sector, **options):
                             lat, lon = loc.value.split(',')[0:2]
                             new_host.latitude = float(lat)
                             new_host.longitude = float(lon)
-                        except ValueError:
+                        except (ValueError, EasySNMPTimeoutError):
                             pass
                         if not options['dry_run']:
                             new_host.save()
