@@ -10,7 +10,7 @@ class IPAddressAdmin(admin.ModelAdmin):
         'fqdn',
         'auto_dns',
     )
-    search_fields = ('ip', )
+    search_fields = ('ip', 'host__name', 'host__site__name')
 admin.site.register(IPAddress, IPAddressAdmin)
 
 
