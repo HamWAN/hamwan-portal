@@ -10,6 +10,11 @@ NETWORKS = map(IPNetwork, [
     '44.24.240.0/20',
     '44.25.0.0/16',
 ])
+RFC1918 = map(IPNetwork, [
+    '10.0.0.0/8',
+    '172.16.0.0/12',
+    '172.16.0.0/12',
+])
 
 
 class bcolors:
@@ -51,6 +56,11 @@ class Command(BaseCommand):
             try:
                 routedst = IPNetwork(line.split(' ')[0])
             except ValueError:
+                continue
+
+            if any(routedst in net for net in RFC1918):
+                self.write_color(bcolors.FAIL,
+                                 str(routedst) + " in RFC 1918")
                 continue
 
             if all(routedst not in net for net in NETWORKS):
