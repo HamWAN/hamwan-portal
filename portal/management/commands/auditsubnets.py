@@ -26,6 +26,11 @@ class bcolors:
 class Command(BaseCommand):
     help = 'Compares route list to documented subnets.'
     option_list = BaseCommand.option_list + (
+        make_option('--no-color',
+            action='store_true',
+            dest='no_color',
+            default=False,
+            help='Disables colorized output.'),
         make_option('-q', '--quiet',
             action='store_true',
             dest='quiet',
@@ -62,4 +67,7 @@ class Command(BaseCommand):
                                  str(routedst) + " not documented")
 
     def write_color(self, color, message):
-        self.stdout.write(color + message + bcolors.ENDC)
+        if self.options['no_color']:
+            self.stdout.write(message)
+        else:
+            self.stdout.write(color + message + bcolors.ENDC)
