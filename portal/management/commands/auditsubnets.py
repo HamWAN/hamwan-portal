@@ -1,4 +1,5 @@
 import subprocess
+from optparse import make_option
 from ipaddr import IPNetwork
 
 from django.core.management.base import BaseCommand, CommandError
@@ -24,8 +25,19 @@ class bcolors:
 
 class Command(BaseCommand):
     help = 'Compares route list to documented subnets.'
+    option_list = BaseCommand.option_list + (
+        make_option('-q', '--quiet',
+            action='store_true',
+            dest='quiet',
+            default=False,
+            help='Hide documented networks.'),
+        )
 
     def handle(self, *args, **options):
+        self.options = options
+        self.audit_subnets()
+
+    def audit_subnets(self):
         subnets = [subnet.network for subnet in Subnet.objects.all()]
         addresses = [ipaddress.ip for ipaddress in IPAddress.objects.all()]
         # self.stdout.write(str(subnets))
@@ -40,9 +52,14 @@ class Command(BaseCommand):
                 continue
 
             if routedst in subnets:
-                message = bcolors.OKGREEN + str(routedst)
+                if not self.options['quiet']:
+                    self.write_color(bcolors.OKGREEN, str(routedst))
             elif routedst in addresses:
-                message = str(routedst) + " host matched"
+                if not self.options['quiet']:
+                    self.stdout.write(str(routedst) + " host matched")
             else:
-                message = bcolors.FAIL + str(routedst) + " not documented"
-            self.stdout.write(message + bcolors.ENDC)
+                self.write_color(bcolors.FAIL,
+                                 str(routedst) + " not documented")
+
+    def write_color(self, color, message):
+        self.stdout.write(color + message + bcolors.ENDC)
