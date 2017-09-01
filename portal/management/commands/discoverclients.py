@@ -53,31 +53,35 @@ def walk_sector(self, sector, **options):
                 self.stdout.write("%s on %s not found in portal (neighbor discovery: %s)\n" % (mac, sector,
                     str(neighbor or "disabled")))
                 if neighbor:
+                    new_host = Host()
+                    new_host.name = neighbor[1].replace('/', '-')
+                    new_host.type = "client"
+                    new_host.wlan_mac = mac
+                    try:
+                        loc = snmp_get(OID_LOCATION, hostname=neighbor[0], **SNMP_ARGS)
+                        lat, lon = loc.value.split(',')[0:2]
+                        new_host.latitude = float(lat)
+                        new_host.longitude = float(lon)
+                    except (ValueError, EasySNMPTimeoutError):
+                        pass
+                    if not options['dry_run']:
+                        new_host.save()
                     try:
                         ip = IPAddress.objects.get(ip=neighbor[0])
-                        self.stdout.write("  %s" % ip.host)
+                        self.stdout.write("Address was previously registered to %s." % str(ip))
                     except IPAddress.DoesNotExist:
-                        new_host = Host()
-                        new_host.name = neighbor[1].replace('/', '-')
-                        new_host.type = "client"
-                        new_host.wlan_mac = mac
-                        try:
-                            loc = snmp_get(OID_LOCATION, hostname=neighbor[0], **SNMP_ARGS)
-                            lat, lon = loc.value.split(',')[0:2]
-                            new_host.latitude = float(lat)
-                            new_host.longitude = float(lon)
-                        except (ValueError, EasySNMPTimeoutError):
-                            pass
-                        if not options['dry_run']:
-                            new_host.save()
                         ip = IPAddress()
-                        ip.host = new_host
-                        ip.interface = "wlan1"
                         ip.ip = neighbor[0]
-                        ip.primary = True
-                        if not options['dry_run']:
-                            ip.save()
-                        # print " ", repr(new_host)
+                    ip.host = new_host
+                    ip.interface = "wlan1"
+                    ip.primary = True
+                    if not options['dry_run']:
+                        ip.save()
+                        print "Added %s" % str(ip)
+                else:
+                    if not options['dry_run']:
+                        self.stdout.write("Cannot automatically add host record without neighbor discovery. "
+                                          "Manual intervention required.")
     except EasySNMPTimeoutError as e:
         self.stderr.write("%s %s" % (e, sector.fqdn()))
 
