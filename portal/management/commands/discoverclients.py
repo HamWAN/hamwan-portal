@@ -2,7 +2,7 @@ from Queue import Queue
 from threading import Thread
 from optparse import make_option
 
-from easysnmp import snmp_get, snmp_walk, EasySNMPTimeoutError
+from easysnmp import snmp_get, snmp_walk, EasySNMPConnectionError, EasySNMPTimeoutError
 
 from django.core.management.base import BaseCommand
 from portal.models import Host, IPAddress
@@ -15,10 +15,13 @@ OID_LOCATION = "iso.3.6.1.2.1.1.6.0"
 SNMP_ARGS = {
     "community": "hamwan",
     "version": 2,
+    "timeout": 2,
+    "retries": 1,
 }
 
 
-known_macs = Host.objects.values_list('wlan_mac', flat=True)
+known_macs = dict((host.wlan_mac.upper(), host) for host in
+                  Host.objects.exclude(wlan_mac__exact='').exclude(wlan_mac__isnull=True))
 neighbors = {}
 
 
@@ -37,13 +40,36 @@ def get_neighbors(hostname):
     return dict(zip(macs, values))
 
 
+def get_location(hostname):
+    """Requests and parses the snmp location from a hostname or address.
+    The expected format is: /snmp set location=47.1234,-121.1234"""
+    try:
+        loc = snmp_get(OID_LOCATION, hostname=hostname, **SNMP_ARGS)
+        lat, lon = loc.value.split(',')[0:2]
+        return float(lat), float(lon)
+    except (ValueError, EasySNMPConnectionError, EasySNMPTimeoutError):
+        return None, None
+
+
 def walk_sector(self, sector, **options):
     try:
         for i in snmp_walk(OID_REG_TABLE, hostname=sector.fqdn(), **SNMP_ARGS):
             mac = extract_mac_from_oid(i.oid)
             if mac in known_macs:
-                if False and show_matched:
-                    self.stdout.write("%s on %s matched\n" % (mac, sector))
+                host = known_macs[mac]
+                if options['show_matched']:
+                    self.stdout.write("%s on %s matched" % (host.fqdn(), sector))
+                old_location = (host.latitude, host.longitude)
+                new_location = get_location(host.fqdn())
+                if all(new_location) and new_location != old_location:
+                    self.stdout.write("%s location changed from %s to %s" % (
+                        host.fqdn(),
+                        ','.join(map(str, old_location)),
+                        ','.join(map(str, new_location)),
+                    ))
+                    if not options['dry_run']:
+                        host.latitude, host.longitude = new_location
+                        host.save()
             else:
                 try:
                     neighbors[sector.name]
@@ -57,13 +83,7 @@ def walk_sector(self, sector, **options):
                     new_host.name = neighbor[1].replace('/', '-')
                     new_host.type = "client"
                     new_host.wlan_mac = mac
-                    try:
-                        loc = snmp_get(OID_LOCATION, hostname=neighbor[0], **SNMP_ARGS)
-                        lat, lon = loc.value.split(',')[0:2]
-                        new_host.latitude = float(lat)
-                        new_host.longitude = float(lon)
-                    except (ValueError, EasySNMPTimeoutError):
-                        pass
+                    new_host.latitude, new_host.longitude = get_location(neighbor[0])
                     if not options['dry_run']:
                         new_host.save()
                     try:
