@@ -5,6 +5,8 @@ from optparse import make_option
 from easysnmp import snmp_get, snmp_walk, EasySNMPConnectionError, EasySNMPTimeoutError
 
 from django.core.management.base import BaseCommand
+from django.db import IntegrityError
+from django.utils.text import slugify
 from portal.models import Host, IPAddress
 
 OID_NEIGHBOR_IP = "iso.3.6.1.4.1.14988.1.1.11.1.1.2"
@@ -59,12 +61,12 @@ def walk_sector(self, sector, **options):
                 host = known_macs[mac]
                 if options['show_matched']:
                     self.stdout.write("%s on %s matched" % (host.fqdn(), sector))
-                old_location = (host.latitude, host.longitude)
+                old_location = map(str, (host.latitude, host.longitude))
                 new_location = get_location(host.fqdn())
-                if all(new_location) and new_location != old_location:
+                if all(new_location) and map(str, new_location) != old_location:
                     self.stdout.write("%s location changed from %s to %s" % (
                         host.fqdn(),
-                        ','.join(map(str, old_location)),
+                        ','.join(old_location),
                         ','.join(map(str, new_location)),
                     ))
                     if not options['dry_run']:
@@ -80,12 +82,17 @@ def walk_sector(self, sector, **options):
                     str(neighbor or "disabled")))
                 if neighbor:
                     new_host = Host()
-                    new_host.name = neighbor[1].replace('/', '-')
+                    new_host.name = slugify(unicode(neighbor[1]))
                     new_host.type = "client"
                     new_host.wlan_mac = mac
                     new_host.latitude, new_host.longitude = get_location(neighbor[0])
                     if not options['dry_run']:
-                        new_host.save()
+                        try:
+                            new_host.save()
+                        except IntegrityError as e:
+                            self.stdout.write(str(e))
+                            self.stdout.write("MAC changed. Manual review required to prevent DNS hijack.")
+                            continue
                     try:
                         ip = IPAddress.objects.get(ip=neighbor[0])
                         self.stdout.write("Address was previously registered to %s." % str(ip))
@@ -102,7 +109,7 @@ def walk_sector(self, sector, **options):
                     if not options['dry_run']:
                         self.stdout.write("Cannot automatically add host record without neighbor discovery. "
                                           "Manual intervention required.")
-    except EasySNMPTimeoutError as e:
+    except (EasySNMPConnectionError, EasySNMPTimeoutError) as e:
         self.stderr.write("%s %s" % (e, sector.fqdn()))
 
 
@@ -145,8 +152,10 @@ class Command(BaseCommand):
         def worker():
             while True:
                 args = q.get()
-                walk_sector(*args, **options)
-                q.task_done()
+                try:
+                    walk_sector(*args, **options)
+                finally:
+                    q.task_done()
         q = Queue()
         for i in range(10):
             t = Thread(target=worker)
