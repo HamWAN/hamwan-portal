@@ -80,7 +80,7 @@ class Command(BaseCommand):
 
             if any(routedst in net for net in RFC1918):
                 self.write_color(bcolors.FAIL,
-                                 str(routedst).ljust(17) + "in RFC 1918")
+                                 str(routedst).ljust(17) + "RFC 1918 leaked into HamWAN")
                 continue
 
             # route is one of our supernets, skip it
@@ -109,7 +109,7 @@ class Command(BaseCommand):
                                       addresses[routedst].fqdn())
             else:
                 self.write_color(bcolors.FAIL,
-                                 str(routedst).ljust(17) + "not documented")
+                                 str(routedst).ljust(17) + "is in table but not documented")
                 if self.options['supernets']:
                     supernets = sorted(
                         filter(lambda x: routedst in x, subnet_map.keys()),
