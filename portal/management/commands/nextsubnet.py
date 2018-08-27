@@ -44,4 +44,5 @@ class Command(BaseCommand):
         if found not in block:
             raise CommandError(
                 "No /%ss available in %s" % (prefixlen, str(block)))
+        self.stderr.write("https://encrypted.hamwan.org/admin/portal/subnet/add/?network=" + str(found))
         return str(found)
