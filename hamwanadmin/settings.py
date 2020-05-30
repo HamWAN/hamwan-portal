@@ -16,7 +16,8 @@ DATABASES = {
     },
 }
 
-DATABASE_ROUTERS = ['hamwanadmin.dbrouter.DnsRouter', ]
+# Uncomment in prod where pdns is a separate database
+# DATABASE_ROUTERS = ['hamwanadmin.dbrouter.DnsRouter', ]
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
