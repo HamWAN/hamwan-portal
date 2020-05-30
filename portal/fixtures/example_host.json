@@ -1,0 +1,167 @@
+[
+{
+    "pk": 1, 
+    "model": "dns.record", 
+    "fields": {
+        "ordername": "", 
+        "domain": 2, 
+        "name": "loopback.s1.seattle.hamwan.net", 
+        "prio": null, 
+        "auth": true, 
+        "content": "44.25.0.1", 
+        "ttl": null, 
+        "change_date": 2020053002, 
+        "type": "A"
+    }
+},
+{
+    "pk": 2, 
+    "model": "dns.record", 
+    "fields": {
+        "ordername": "", 
+        "domain": 24, 
+        "name": "1.0.25.44.in-addr.arpa", 
+        "prio": null, 
+        "auth": true, 
+        "content": "loopback.s1.seattle.hamwan.net", 
+        "ttl": null, 
+        "change_date": 2020053002, 
+        "type": "PTR"
+    }
+},
+{
+    "pk": 3, 
+    "model": "dns.record", 
+    "fields": {
+        "ordername": "", 
+        "domain": 2, 
+        "name": "s1.seattle.hamwan.net", 
+        "prio": null, 
+        "auth": true, 
+        "content": "loopback.s1.seattle.hamwan.net", 
+        "ttl": null, 
+        "change_date": 2020053004, 
+        "type": "CNAME"
+    }
+},
+{
+    "pk": 4, 
+    "model": "dns.record", 
+    "fields": {
+        "ordername": "", 
+        "domain": 2, 
+        "name": "ether1.s1.seattle.hamwan.net", 
+        "prio": null, 
+        "auth": true, 
+        "content": "44.25.1.1", 
+        "ttl": null, 
+        "change_date": 2020053006, 
+        "type": "A"
+    }
+},
+{
+    "pk": 5, 
+    "model": "dns.record", 
+    "fields": {
+        "ordername": "", 
+        "domain": 24, 
+        "name": "1.1.25.44.in-addr.arpa", 
+        "prio": null, 
+        "auth": true, 
+        "content": "ether1.s1.seattle.hamwan.net", 
+        "ttl": null, 
+        "change_date": 2020053004, 
+        "type": "PTR"
+    }
+},
+{
+    "pk": 6, 
+    "model": "dns.record", 
+    "fields": {
+        "ordername": "", 
+        "domain": 2, 
+        "name": "wlan1.s1.seattle.hamwan.net", 
+        "prio": null, 
+        "auth": true, 
+        "content": "44.25.2.1", 
+        "ttl": null, 
+        "change_date": 2020053008, 
+        "type": "A"
+    }
+},
+{
+    "pk": 7, 
+    "model": "dns.record", 
+    "fields": {
+        "ordername": "", 
+        "domain": 24, 
+        "name": "1.2.25.44.in-addr.arpa", 
+        "prio": null, 
+        "auth": true, 
+        "content": "wlan1.s1.seattle.hamwan.net", 
+        "ttl": null, 
+        "change_date": 2020053006, 
+        "type": "PTR"
+    }
+},
+{
+    "pk": 1, 
+    "model": "portal.site", 
+    "fields": {
+        "latitude": null, 
+        "status": "", 
+        "comment": "", 
+        "name": "seattle", 
+        "longitude": null
+    }
+},
+{
+    "pk": 1, 
+    "model": "portal.host", 
+    "fields": {
+        "name": "s1.seattle", 
+        "latitude": null, 
+        "notes": "", 
+        "site": 1, 
+        "longitude": null, 
+        "wlan_mac": "", 
+        "eth_mac": "", 
+        "owner": null, 
+        "type": "sector", 
+        "admins": []
+    }
+},
+{
+    "pk": 1, 
+    "model": "portal.ipaddress", 
+    "fields": {
+        "interface": "loopback", 
+        "ip": "44.25.0.1", 
+        "host": 1, 
+        "auto_dns": true, 
+        "primary": true
+    }
+},
+{
+    "pk": 2, 
+    "model": "portal.ipaddress", 
+    "fields": {
+        "interface": "ether1", 
+        "ip": "44.25.1.1", 
+        "host": 1, 
+        "auto_dns": true, 
+        "primary": false
+    }
+},
+{
+    "pk": 3, 
+    "model": "portal.ipaddress", 
+    "fields": {
+        "interface": "wlan1", 
+        "ip": "44.25.2.1", 
+        "host": 1, 
+        "auto_dns": true, 
+        "primary": false
+    }
+}
+]
