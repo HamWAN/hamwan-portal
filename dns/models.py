@@ -38,11 +38,11 @@ RECORD_TYPES = [(a, a) for a in ('A', 'CNAME', 'NS', 'PTR', 'SOA', 'SRV')]
 class Domain(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
-    master = models.CharField(max_length=128, blank=True)
+    master = models.CharField(max_length=128, null=True, blank=True)
     last_check = models.IntegerField(null=True, blank=True)
     type = models.CharField(max_length=6)
     notified_serial = models.IntegerField(null=True, blank=True)
-    account = models.CharField(max_length=40, blank=True)
+    account = models.CharField(max_length=40, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
