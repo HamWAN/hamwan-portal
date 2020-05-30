@@ -82,6 +82,8 @@ class Record(models.Model):
         return self._generate_ampr_dns('DEL')
 
     def _save_ampr_dns_command(self, command=None):
+        if not AMPR_DNS_QUEUE:
+            return
         with open(AMPR_DNS_QUEUE, 'a') as f:
             f.write("%s\n" % self._generate_ampr_dns_add())
 

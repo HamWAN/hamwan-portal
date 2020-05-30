@@ -182,4 +182,4 @@ LOGGING = {
 
 AMPR_DNS_FROM = "portal-dns-bot@example.com"
 AMPR_DNS_TO = "ampraddr@example.com"
-AMPR_DNS_QUEUE = '/example/path/amprdnsqueue'
+AMPR_DNS_QUEUE = False  # '/example/path/amprdnsqueue'
