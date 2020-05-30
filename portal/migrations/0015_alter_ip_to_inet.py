@@ -3,13 +3,18 @@ from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
+from django.db.utils import OperationalError
 
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # postgresql only
-        db.execute("ALTER TABLE portal_ipaddress ALTER COLUMN ip TYPE inet USING(ip::inet);")
+        try:
+            db.execute("ALTER TABLE portal_ipaddress ALTER COLUMN ip TYPE inet USING(ip::inet);")
+        except OperationalError:
+            import sys
+            sys.stderr.write("Warning: could not set TYPE inet on ip field. Only supported on postgres.\n")
 
     def backwards(self, orm):
         db.execute("ALTER TABLE portal_ipaddress ALTER COLUMN ip TYPE varchar(45);")
