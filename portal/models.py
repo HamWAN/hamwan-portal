@@ -1,6 +1,6 @@
 import subprocess
 
-from django.db import models
+from django.db import models, transaction
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.template.loader import render_to_string
@@ -222,7 +222,13 @@ class IPAddress(models.Model):
             self._remove_dns()
         super(IPAddress, self).delete()
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
+        if self.pk:
+            # consider IPAddress immutable
+            self.delete()
+            self.pk = None
+
         if self.auto_dns:
             # update DNS records
             self._add_dns()
