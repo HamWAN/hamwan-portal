@@ -32,8 +32,3 @@ class MACAddressField(models.Field):
         defaults = {'form_class': MACAddressFormField}
         defaults.update(kwargs)
         return super(MACAddressField, self).formfield(**defaults)
-
-
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([([MACAddressField], [], {})],
-    ["^portal\.fields\.MACAddressField"])

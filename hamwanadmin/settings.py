@@ -133,7 +133,6 @@ INSTALLED_APPS = (
     'dns',
     'portal',
     # 'map',
-    'south',
     'utils',
     # Uncomment the next line to enable the request and query debugging tool
     # 'debug_toolbar',
