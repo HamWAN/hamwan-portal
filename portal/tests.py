@@ -15,7 +15,7 @@ class IPAddressTest(TestCase):
         if want:
             self.assertEqual(address.fqdn(), a_records[0].name)
         ptr_record = Record.objects.filter(
-            type="PTR", content=str(address.fqdn()))
+            type="PTR", name=address._generate_ptr())
         self.assertEqual(want, ptr_record.count())
 
     def test_create_address(self):
@@ -24,7 +24,6 @@ class IPAddressTest(TestCase):
         ip.save()
         self._assert_address_records(ip)
 
-    @unittest.skip("update is broken")
     def test_update_address(self):
         old_addr = "44.25.0.1"
         new_addr = "44.25.0.2"
@@ -57,3 +56,10 @@ class IPAddressTest(TestCase):
         self.assertEqual(3, addresses.count())
         for addr in addresses:
             self._assert_address_records(addr)
+
+    def test_delete_host(self):
+        host = Host.objects.get(name="s1.seattle")
+        host.delete()
+        for model in Host, IPAddress, Record:
+            self.assertFalse(model.objects.count(),
+                             msg="orphaned objects: {}".format(model.objects.all()))

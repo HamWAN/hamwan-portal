@@ -1,6 +1,7 @@
 import subprocess
 
-from django.db import models
+from django.db import models, transaction
+from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.template.loader import render_to_string
@@ -217,12 +218,13 @@ class IPAddress(models.Model):
                 content__iexact=orig.fqdn(),
             ).delete()
 
-    def delete(self):
-        if self.auto_dns:
-            self._remove_dns()
-        super(IPAddress, self).delete()
-
+    @transaction.atomic
     def save(self, *args, **kwargs):
+        if self.pk:
+            # consider IPAddress immutable
+            self.delete()
+            self.pk = None
+
         if self.auto_dns:
             # update DNS records
             self._add_dns()
@@ -241,6 +243,12 @@ class IPAddress(models.Model):
         ordering = ['ip']
         verbose_name = "IP Address"
         verbose_name_plural = "IP Addresses"
+
+
+@receiver(models.signals.pre_delete, sender=IPAddress)
+def remote_dns_hook(sender, instance, using, **kwargs):
+    if instance.auto_dns:
+        instance._remove_dns()
 
 
 class Subnet(models.Model):
