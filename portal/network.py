@@ -150,10 +150,3 @@ class IPAddressField(models.Field):
         }
         defaults.update(kwargs)
         return super(IPAddressField, self).formfield(**defaults)
-
- 
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([([IPNetworkField], [], {})],
-    ["^portal\.network\.IPNetworkField"])
-add_introspection_rules([([IPAddressField], [], {})],
-    ["^portal\.network\.IPAddressField"])
