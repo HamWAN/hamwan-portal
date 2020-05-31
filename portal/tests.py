@@ -56,3 +56,10 @@ class IPAddressTest(TestCase):
         self.assertEqual(3, addresses.count())
         for addr in addresses:
             self._assert_address_records(addr)
+
+    def test_delete_host(self):
+        host = Host.objects.get(name="s1.seattle")
+        host.delete()
+        for model in Host, IPAddress, Record:
+            self.assertFalse(model.objects.count(),
+                             msg="orphaned objects: {}".format(model.objects.all()))
