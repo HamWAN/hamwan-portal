@@ -1,7 +1,8 @@
 from ipaddr import IPNetwork
+from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
-from portal.models import Subnet
+from portal.models import IPAddress, Subnet
 
 
 prefixlenq = Subnet.objects.extra(select={'masklen': "masklen(network)"}
@@ -12,10 +13,14 @@ def get_next_network(address, prefixlen):
     return IPNetwork("/".join(map(str, [address, prefixlen])))
 
 
-def find_free_network(existing_networks, start, prefixlen):
+def find_free_network(existing_networks, start, prefixlen, ignore_hosts=False):
     new_network = get_next_network(start, prefixlen)
     for net in existing_networks:
-        if new_network in net or net in new_network:
+        if any([
+            new_network in net,
+            net in new_network,
+            not ignore_hosts and IPAddress.objects.extra(where=["ip <<= inet '%s'" % new_network]),
+        ]):
             return find_free_network(existing_networks,
                                      max(new_network) + 1,
                                      prefixlen)
@@ -28,6 +33,14 @@ class Command(BaseCommand):
            '\nSuggested block names:\n    ' + \
            '\n    '.join(prefixlenq.values_list('notes', flat=True)[:10]) + \
            '\nBlock names use case-insensitive starts-with matching.'
+    option_list = BaseCommand.option_list + (
+        make_option(
+            '--ignore-hosts',
+            action='store_true',
+            dest='ignore_hosts',
+            default=False,
+            help='Skips checking for any hosts in the new subnet'),
+        )
 
     def handle(self, *args, **options):
         blockname, prefixlen = args
@@ -40,7 +53,8 @@ class Command(BaseCommand):
             [n.network for n in Subnet.objects.extra(
                 where=["inet '%s' >> network" % block])],
             min(block),
-            prefixlen)
+            prefixlen,
+            options.get("ignore_hosts"))
         if found not in block:
             raise CommandError(
                 "No /%ss available in %s" % (prefixlen, str(block)))
