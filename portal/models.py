@@ -38,12 +38,14 @@ HOST_TYPES = (
 )
 
 OS_TYPES = (
-    ('linux', 'Linux'),
     ('routeros', 'RouterOS'),
+    ('airos', 'AirOS'),
+    ('linux', 'Linux'),
     ('esxi', 'ESXi'),
     ('windows', 'Windows'),
     ('ilo', 'iLO'),
     ('other', 'Other'),
+    (None, 'None'),
 )
 
 class DomainSortManager(models.Manager):
@@ -80,7 +82,7 @@ class Host(models.Model):
     name = models.CharField(max_length=242, unique=True,
         validators=[domain_validator])
     type = models.CharField(max_length=24, choices=HOST_TYPES)
-    os = models.CharField(max_length=32, choices=OS_TYPES)
+    os = models.CharField(max_length=32, null=True, choices=OS_TYPES)
     site = models.ForeignKey(Site, null=True, blank=True)
 
     owner = models.ForeignKey('auth.User', null=True, blank=True,
