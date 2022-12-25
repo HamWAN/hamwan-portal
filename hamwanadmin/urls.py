@@ -9,6 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^', include('portal.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    #url(r'^api/', include('api.urls')),
     url(r'^dns/', include('dns.urls')),
     url(r'^login/$', 'django.contrib.auth.views.login'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
