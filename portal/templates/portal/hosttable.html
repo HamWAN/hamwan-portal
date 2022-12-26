@@ -5,7 +5,6 @@
           <th>Site</th>
           <th>Owner</th>
           <th class="text-right">Host FQDN</th>
-          <th>Type</td>
           <th>OS</th>
           <th>Interfaces</th>
           <th>Notes</th>
@@ -17,7 +16,6 @@
           <td>{% if host.site %}{{ host.site }}{% endif %}</td>
           <td>{{ host.owner }}</td>
           <td class="text-right"><a href="{% url 'portal.views.host_detail' host.name %}">{{ host.fqdn }}</a></td>
-          <td>{{ host.type }}</td>
           <td>{{ host.os }}</td>
           <td>{{ host.ipaddresses.all|join:"<br>" }}</td>
           <td>{{ host.notes|truncatewords:3 }}</td>
