@@ -34,20 +34,6 @@ def all_hosts(request):
 def ansible_hosts(request):
     """Generates Ansible dynamic inventory format"""
 
-    # hint OS by assuming all routers are Mikrotik
-    os = {
-        'sector': 'mikrotik',
-        'ptp': 'mikrotik',
-        'edgerouter': 'mikrotik',
-        'cellrouter': 'mikrotik',
-        'client': 'mikrotik',
-        'server': 'linux',
-        'anycast': None,
-        'pdu': None,
-        'kvm': None,
-        'other': 'linux',
-    }
-
     inventory = {
         # this allows ansible to cache the result, instead of calling per host
         "_meta": {
@@ -57,15 +43,13 @@ def ansible_hosts(request):
 
     for host in Host.objects.select_related('owner').all():
         groups = [
-            str(host.owner),
-            host.type,
-            host.name,
-            os[host.type],
+            "owner_" + str(host.owner),
+            "type_" + host.type,
+            "name_" + host.name,
+            "os_" + host.os,
         ]
         for group in groups:
-            if group is None:
-                continue
-            elif group in inventory:
+            if group in inventory:
                 inventory[group].append(host.fqdn())
             else:
                 inventory[group] = [host.fqdn()]
