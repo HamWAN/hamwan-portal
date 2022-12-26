@@ -28,11 +28,12 @@ class HostAdmin(admin.ModelAdmin):
         'site',
         '__unicode__',
         'owner',
+        'type',
         'os',
         'get_ips'
     )
     list_display_links = '__unicode__',
-    list_filter = ('owner', 'site', 'os')
+    list_filter = ('owner', 'site', 'type', 'os')
     search_fields = ('name', 'ipaddresses__ip', 'owner__username')
     save_as = True
     save_on_top = True
