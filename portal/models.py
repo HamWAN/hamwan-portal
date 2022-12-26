@@ -31,6 +31,8 @@ HOST_TYPES = (
     ('cellrouter', 'Cell Router'),
     ('client', 'Client'),
     ('server', 'Server'),
+    ('vm', 'Virtual Machine'),
+    ('container', 'Container'),
     ('anycast', 'Anycast service'),
     ('pdu', 'PDU'),
     ('kvm', 'KVM/iLO/DRAC'),
