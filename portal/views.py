@@ -43,10 +43,10 @@ def ansible_hosts(request):
 
     for host in Host.objects.select_related('owner').all():
         groups = [
-            "owner_" + str(host.owner),
-            "type_" + host.type,
-            "name_" + host.name,
-            "os_" + host.os,
+            "owner_" + str(host.owner or ''),
+            "type_" + str(host.type or ''),
+            "name_" + str(host.name or ''),
+            "os_" + str(host.os or ''),
         ]
         for group in groups:
             if group in inventory:
