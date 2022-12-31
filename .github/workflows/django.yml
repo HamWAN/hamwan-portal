@@ -17,14 +17,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+    - name: Build Container Image
+      run: docker build --build-arg PYTHON_VERSION=${{ matrix.python-version }} -t hamwan-portal .
     - name: Run Tests
       run: |
-        python manage.py test
+        docker run --rm hamwan-portal manage.py test
