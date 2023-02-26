@@ -97,6 +97,7 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     'portal.context_processors.encrypted44',
 )
 
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
