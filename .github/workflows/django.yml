@@ -21,4 +21,4 @@ jobs:
       run: docker build --build-arg PYTHON_VERSION=${{ matrix.python-version }} -t hamwan-portal .
     - name: Run Tests
       run: |
-        docker run --rm hamwan-portal manage.py test
+        docker run --rm hamwan-portal manage.py test -v3
