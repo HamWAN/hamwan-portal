@@ -50,8 +50,8 @@ class Command(BaseCommand):
             self.stderr.write("WARNING: last host (%s) is not in last subnet (%s)!" % (
                 last_host, last_network))
 
-        next31 = IPv4Network(str(max(last_network, last_host) + 1) + '/30')
-        hosts = map(str, next31.iterhosts())
+        next_subnet = IPv4Network(str(max(last_network, last_host) + 1) + '/30')
+        hosts = map(str, next_subnet.iterhosts())
         self.stdout.write(" ".join(hosts))
         if options['dry_run']:
             return
@@ -80,6 +80,6 @@ class Command(BaseCommand):
             ip.save()
             self.stderr.write("  " + str(ip))
         subnet = Subnet()
-        subnet.network = next31
+        subnet.network = next_subnet
         subnet.notes = new_host.name
         subnet.save()
