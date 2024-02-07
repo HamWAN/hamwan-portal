@@ -3,7 +3,7 @@ import unittest
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from dns.models import Record
+from dns.models import Record, Domain
 from portal.models import Host, IPAddress
 from portal import views
 
@@ -45,6 +45,18 @@ class IPAddressTest(TestCase):
             IPAddress(ip=new_addr, host=address.host, interface=address.interface), want=1)
         self._assert_address_records(
             IPAddress(ip=old_addr, host=address.host, interface=address.interface), want=0)
+
+    def test_update_address_missing_ptr_domain(self):
+        old_addr = "44.25.0.1"
+        new_addr = "10.25.0.2"
+        address = IPAddress.objects.get(ip=old_addr)
+        address.ip = new_addr
+        self.assertRaises(Domain.DoesNotExist, address.save)
+        # original address and records are expected to remain intact
+        self._assert_address_records(
+            IPAddress(ip=new_addr, host=address.host, interface=address.interface), want=0)
+        self._assert_address_records(
+            IPAddress(ip=old_addr, host=address.host, interface=address.interface), want=1)
 
     def test_delete_address(self):
         old_addr = "44.25.0.1"
