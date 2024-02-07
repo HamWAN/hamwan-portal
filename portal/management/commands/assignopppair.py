@@ -50,7 +50,7 @@ class Command(BaseCommand):
             self.stderr.write("WARNING: last host (%s) is not in last subnet (%s)!" % (
                 last_host, last_network))
 
-        next31 = IPv4Network(str(max(last_network, last_host) + 1) + '/31')
+        next31 = IPv4Network(str(max(last_network, last_host) + 1) + '/30')
         hosts = map(str, next31.iterhosts())
         self.stdout.write(" ".join(hosts))
         if options['dry_run']:
@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 raise CommandError("Aborting. Use -f to force adding more addresses to an existing host.")
         new_host.save()
         self.stderr.write(str(new_host))
-        for (name, address) in zip(("first", "second"), hosts):
+        for (name, address) in zip(("first", "second"), hosts[1:3]):
             ip = IPAddress()
             ip.host = new_host
             ip.interface = name
