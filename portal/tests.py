@@ -1,9 +1,20 @@
 import unittest
 
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from dns.models import Record
 from portal.models import Host, IPAddress
+from portal import views
+
+
+class AnsibleHostsTest(TestCase):
+    fixtures = ['domains.json', 'example_host.json']
+
+    def test_ansible_hosts_view(self):
+        response = self.client.get(reverse(views.ansible_hosts))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, '{"name_s1.seattle": ["s1.seattle.hamwan.net"], "os_": ["s1.seattle.hamwan.net"], "type_sector": ["s1.seattle.hamwan.net"], "_meta": {"hostvars": {}}, "owner_": ["s1.seattle.hamwan.net"]}')
 
 
 class IPAddressTest(TestCase):
