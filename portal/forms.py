@@ -43,6 +43,7 @@ class UserHostForm(HostForm):
 class IPAddressForm(forms.ModelForm):
     class Meta:
         model = IPAddress
+        exclude = []
 
 
 class UserIPAddressForm(IPAddressForm):
@@ -76,6 +77,7 @@ class IPAddressFormset(forms.models.BaseInlineFormSet):
 class SubnetForm(forms.ModelForm):
     class Meta:
         model = Subnet
+        exclude = []
 
 
 class UserSubnetForm(SubnetForm):

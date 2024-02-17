@@ -58,3 +58,4 @@ class RecordForm(forms.ModelForm):
 
     class Meta:
         model = Record
+        exclude = []
