@@ -177,7 +177,6 @@ class IPAddress(models.Model):
             content=self.ip,
             defaults={'auth': True},
         )
-        new_a.save()
 
         try:
             domain = Domain.objects.get(name=self._generate_ptr(domain=True))
@@ -187,17 +186,16 @@ class IPAddress(models.Model):
             if str(self.ip).startswith('44.25.'):
                 domain = Domain.objects.get(name='25.44.in-addr.arpa')
             else:
-                domain = None
-        if domain is not None:
-            new_ptr, created = Record.objects.get_or_create(
-                domain=domain,
-                name=self._generate_ptr(),
-                type='PTR',
-                defaults={'content': self.fqdn().lower(), 'auth': True},
-            )
-            if not created:
-                new_ptr.content = self.fqdn().lower()
-            new_ptr.save()
+                raise
+
+        new_ptr, created = Record.objects.get_or_create(
+            domain=domain,
+            name=self._generate_ptr(),
+            type='PTR',
+            defaults={'content': self.fqdn().lower(), 'auth': True},
+        )
+        if not created:
+            new_ptr.content = self.fqdn().lower()
 
         if self.primary and self.interface != "":
             new_cname, created = Record.objects.get_or_create(
@@ -209,6 +207,10 @@ class IPAddress(models.Model):
             if not created:
                 new_cname.content = self.fqdn().lower()
             new_cname.save()
+
+        new_a.save()
+        new_ptr.save()
+
 
     def _remove_dns(self):
         """removes old A and CNAME records"""
