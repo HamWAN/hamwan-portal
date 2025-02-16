@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.4
-ARG PYTHON_VERSION=2.7
+ARG PYTHON_VERSION=3
 FROM python:$PYTHON_VERSION
 EXPOSE 8000
 WORKDIR /app 
