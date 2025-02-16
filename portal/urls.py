@@ -1,24 +1,25 @@
-from django.conf.urls import patterns, url
+from django.urls import include, re_path
 
-from portal import views
+from portal.views import index, own_hosts, all_hosts, ansible_hosts, host_detail, HostDelete
+from portal.views import smokeping, own_subnets, all_subnets, subnet_detail, SubnetDelete
 
 
-urlpatterns = patterns('',
-    url(r'^$', views.index),
-    url(r'^host/$', views.own_hosts),
-    url(r'^host/all$', views.all_hosts),
-    url(r'^host/ansible.json$', views.ansible_hosts),
-    url(r'^host/new$', views.host_detail),
-    url(r'^host/(?P<name>[a-zA-Z0-9-\.]+)/$', views.host_detail),
-    url(r'^host/(?P<slug>[a-zA-Z0-9-\.]+)/delete/$', views.HostDelete.as_view(),
+urlpatterns = [
+    re_path(r'^$', index, name='index'),
+    re_path(r'^host/$', own_hosts, name='own_hosts'),
+    re_path(r'^host/all$', all_hosts, name='all_hosts'),
+    re_path(r'^host/ansible.json$', ansible_hosts, name='ansible_hosts'),
+    re_path(r'^host/new$', host_detail, name='host_detail'),
+    re_path(r'^host/(?P<name>[a-zA-Z0-9-\.]+)/$', host_detail, name='host_detail'),
+    re_path(r'^host/(?P<slug>[a-zA-Z0-9-\.]+)/delete/$', HostDelete.as_view(),
         name="host_delete"),
-    url(r'^smokeping/$', views.smokeping),
-    url(r'^subnet/$', views.own_subnets),
-    url(r'^subnet/all/visual$', views.all_subnets,
+    re_path(r'^smokeping/$', smokeping, name='smokeping'),
+    re_path(r'^subnet/$', own_subnets, name='own_subnets'),
+    re_path(r'^subnet/all/visual$', all_subnets,
         {'template': 'portal/subnet_diagram.html'}, name='subnet_diagram'),
-    url(r'^subnet/all$', views.all_subnets),
-    url(r'^subnet/new$', views.subnet_detail),
-    url(r'^subnet/(?P<network>[0-9/\.:]+)/$', views.subnet_detail),
-    url(r'^subnet/(?P<slug>[0-9/\.]+)/delete/$',
-        views.SubnetDelete.as_view(), name="subnet_delete"),
-)
+    re_path(r'^subnet/all$', all_subnets, name='all_subnets'),
+    re_path(r'^subnet/new$', subnet_detail, name='subnet_detail'),
+    re_path(r'^subnet/(?P<network>[0-9/\.:]+)/$', subnet_detail, name='subnet_detail'),
+    re_path(r'^subnet/(?P<slug>[0-9/\.]+)/delete/$',
+        SubnetDelete.as_view(), name="subnet_delete"),
+]

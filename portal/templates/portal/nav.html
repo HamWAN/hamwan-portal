@@ -2,31 +2,31 @@
 <ul class="{{ class }}">
 {% if request.user.is_authenticated %}
   <li class="{% active 'portal.views.index' %}">
-    <a href="{% url 'portal.views.index' %}">Account Summary</a>
+    <a href="{% url 'index' %}">Account Summary</a>
   </li>
   <li class="divider"></li>
   <li class="dropdown-header">Hosts</li>
   <li class="{% active 'portal.views.all_hosts' %}">
-    <a href="{% url 'portal.views.all_hosts' %}">List Hosts</a>
+    <a href="{% url 'all_hosts' %}">List Hosts</a>
   </li>
   <li class="{% active 'portal.views.own_hosts' %}">
-    <a href="{% url 'portal.views.own_hosts' %}">List Your Hosts</a>
+    <a href="{% url 'own_hosts' %}">List Your Hosts</a>
   </li>
   <li class="{% active 'portal.views.host_detail' %}">
-    <a href="{% url 'portal.views.host_detail' %}">Create Host
+    <a href="{% url 'host_detail' %}">Create Host
       <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
     </a>
   </li>
   <li class="divider"></li>
   <li class="dropdown-header">Subnets</li>
   <li class="{% active 'portal.views.all_subnets' %}">
-    <a href="{% url 'portal.views.all_subnets' %}">List Subnets</a>
+    <a href="{% url 'all_subnets' %}">List Subnets</a>
   </li>
   <li class="{% active 'portal.views.own_subnets' %}">
-    <a href="{% url 'portal.views.own_subnets' %}">List Your Subnets</a>
+    <a href="{% url 'own_subnets' %}">List Your Subnets</a>
   </li>
   <li class="{% active 'portal.views.subnet_detail' %}">
-    <a href="{% url 'portal.views.subnet_detail' %}">Create Subnet
+    <a href="{% url 'subnet_detail' %}">Create Subnet
       <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
     </a>
   </li>
@@ -36,7 +36,7 @@
     <a href="{% url 'record_list' %}">List DNS records</a>
   </li>
   <li class="{% active 'dns.views.own_dns' %}">
-    <a href="{% url 'dns.views.own_dns' %}">List Your DNS records</a>
+    <a href="{% url 'own_dns' %}">List Your DNS records</a>
   </li>
   <li class="{% active 'record_create' %}">
     <a href="{% url 'record_create' %}">Create DNS record
@@ -45,10 +45,10 @@
   </li>
 {% else %}
   <li class="{% active 'portal.views.all_hosts' %}">
-    <a href="{% url 'portal.views.all_hosts' %}">List Hosts</a>
+    <a href="{% url 'all_hosts' %}">List Hosts</a>
   </li>
   <li class="{% active 'portal.views.all_subnets' %}">
-    <a href="{% url 'portal.views.all_subnets' %}">List Subnets</a>
+    <a href="{% url 'all_subnets' %}">List Subnets</a>
   </li>
   <li class="{% active 'record_list' %}">
     <a href="{% url 'record_list' %}">List DNS records</a>

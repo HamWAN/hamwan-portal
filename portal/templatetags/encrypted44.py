@@ -8,9 +8,9 @@ def do_startswith(parser, token, negate):
         # split_contents() knows not to split quoted strings.
         tag_name, string, start_string = token.split_contents()
     except ValueError:
-        raise template.TemplateSyntaxError, "%r tag requires two arguments" % token.contents.split()[0]
+        raise template.TemplateSyntaxError("%r tag requires two arguments" % token.contents.split()[0])
     if not (start_string[0] == start_string[-1] and start_string[0] in ('"', "'")):
-        raise template.TemplateSyntaxError, "%r start strings argument should be in quotes" % tag_name
+        raise template.TemplateSyntaxError("%r start strings argument should be in quotes" % tag_name)
     
     end_tag = 'end' + tag_name
     nodelist_true = parser.parse(('else', end_tag))

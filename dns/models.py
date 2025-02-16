@@ -12,7 +12,7 @@ from datetime import datetime
 from django.core.mail import send_mail
 from django.db import models
 
-from hamwanadmin.settings import AMPR_DNS_FROM, AMPR_DNS_TO, AMPR_DNS_QUEUE
+from config.settings import AMPR_DNS_FROM, AMPR_DNS_TO, AMPR_DNS_QUEUE, ROOT_DOMAIN
 
 
 RECORD_TYPES = [(a, a) for a in ('A', 'CNAME', 'NS', 'PTR', 'SOA', 'SRV')]
@@ -44,15 +44,18 @@ class Domain(models.Model):
     notified_serial = models.IntegerField(null=True, blank=True)
     account = models.CharField(max_length=40, null=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
+
+    #def __unicode__(self):
+    #    return self.name
 
     class Meta:
         db_table = 'domains'
 
 class Record(models.Model):
     id = models.AutoField(primary_key=True)
-    domain = models.ForeignKey(Domain, null=True, blank=True)
+    domain = models.ForeignKey(Domain, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255, blank=True)
     type = models.CharField(max_length=10, blank=True)
     content = models.CharField(max_length=65535, blank=True)
@@ -60,18 +63,21 @@ class Record(models.Model):
     prio = models.IntegerField(null=True, blank=True)
     change_date = models.IntegerField(null=True, editable=False)
     ordername = models.CharField(max_length=255, blank=True)
-    auth = models.NullBooleanField(null=True, blank=True, default=True,
+    auth = models.BooleanField(null=True, blank=True, default=True,
         verbose_name="Authoritative")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
+
+    #def __unicode__(self):
+    #    return self.name
 
     def clean(self):
         self.name = self.name.lower()
         self.content = self.content.lower()
 
     def _generate_ampr_dns(self, command):
-        if self.name.endswith('hamwan.net') and self.type in ('A', 'CNAME'):
+        if self.name.endswith(ROOT_DOMAIN) and self.type in ('A', 'CNAME'):
             name = self.name.split('.net')[0]
             return "%s %s %s %s" % (name, command, self.type, self.content)
 
@@ -97,13 +103,13 @@ class Record(models.Model):
         generated_serial = int(datetime.today().strftime('%Y%m%d') + '01')
         current_serial = Record.objects.filter(domain=self.domain).aggregate(
             models.Max('change_date'))['change_date__max']
-        if current_serial < generated_serial or current_serial is None:
+        if current_serial is None or current_serial < generated_serial:
             self.change_date = generated_serial
         else:
             self.change_date = current_serial + 1
 
     def save(self, *args, **kwargs):
-        if self.name.endswith('hamwan.net') and self.type in ('A', 'CNAME'):
+        if self.name.endswith(ROOT_DOMAIN) and self.type in ('A', 'CNAME'):
             self._save_ampr_dns_command()
         self.update_change_date()
         super(Record, self).save(*args, **kwargs)

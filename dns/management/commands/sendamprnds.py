@@ -5,7 +5,7 @@ import urllib2
 from django.core.mail import send_mail
 from django.core.management.base import BaseCommand, CommandError
 
-from hamwanadmin.settings import AMPR_DNS_FROM, AMPR_DNS_TO, AMPR_DNS_QUEUE
+from config.settings import AMPR_DNS_FROM, AMPR_DNS_TO, AMPR_DNS_QUEUE
 
 
 class Command(BaseCommand):

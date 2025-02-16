@@ -1,4 +1,4 @@
-from models import *
+from portal.models import *
 from django.contrib import admin
 
 

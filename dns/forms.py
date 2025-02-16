@@ -3,7 +3,8 @@ from ipaddr import IPAddress
 from django import forms
 
 from portal.models import Subnet
-from models import Record
+from dns.models import Record
+from config.settings import ROOT_DOMAIN
 
 
 class RecordForm(forms.ModelForm):
@@ -20,7 +21,7 @@ class RecordForm(forms.ModelForm):
         instance = getattr(self, 'instance', None)
         name = self.cleaned_data['name'].lower()
         user = self.request.user
-        subdomain = "%s.hamwan.net" % user.username.lower()
+        subdomain = f'{user.username.lower()}.{ROOT_DOMAIN}'
         subnets = Subnet.objects.filter(owner=user)
 
         if instance and instance.pk:
@@ -37,7 +38,7 @@ class RecordForm(forms.ModelForm):
 
         if name != subdomain and \
            not name.endswith(".%s" % subdomain):
-            # name doesn't end with user.hamwan.net, check reverse
+            # name doesn't end with user.ROOT_DOMAIN, check reverse
             try:
                 ip = self._rev_to_ip(name)
             except ValueError:
@@ -58,3 +59,4 @@ class RecordForm(forms.ModelForm):
 
     class Meta:
         model = Record
+        fields = '__all__'

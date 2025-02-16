@@ -2,8 +2,9 @@ import ipaddr
 
 from django import forms
 from django.contrib.auth.models import User
+from django.forms.models import BaseInlineFormSet
 
-from models import Host, IPAddress, Subnet
+from portal.models import Host, IPAddress, Subnet
 
 
 class HostForm(forms.ModelForm):
@@ -43,6 +44,7 @@ class UserHostForm(HostForm):
 class IPAddressForm(forms.ModelForm):
     class Meta:
         model = IPAddress
+        fields = '__all__'
 
 
 class UserIPAddressForm(IPAddressForm):
@@ -53,7 +55,7 @@ class UserIPAddressForm(IPAddressForm):
 
         try:
             ip = ipaddr.IPAddress(self.cleaned_data['ip'])
-        except ValueError, e:
+        except (ValueError, e):
             raise forms.ValidationError(e)
 
         if not any([ip in subnet.network for subnet in subnets]):
@@ -62,20 +64,21 @@ class UserIPAddressForm(IPAddressForm):
         return ip
 
 
-class IPAddressFormset(forms.models.BaseInlineFormSet):
+class IPAddressFormset(BaseInlineFormSet):
     def clean(self):
-        super(IPAddressFormset, self).clean()
+        super().clean()
 
         if any(self.errors):
             return
 
-        if sum([form.cleaned_data.get('primary', False) for form in self.forms]) > 1:
+        if sum(form.cleaned_data.get('primary', False) for form in self.forms) > 1:
             raise forms.ValidationError("Only one interface may be primary.")
 
 
 class SubnetForm(forms.ModelForm):
     class Meta:
         model = Subnet
+        fields = '__all__'
 
 
 class UserSubnetForm(SubnetForm):
@@ -93,7 +96,7 @@ class UserSubnetForm(SubnetForm):
 
         try:
             net = ipaddr.IPNetwork(self.cleaned_data['network'])
-        except ValueError, e:
+        except ValueError as e:
             raise forms.ValidationError(e)
 
         if not any([net in subnet.network for subnet in subnets]):

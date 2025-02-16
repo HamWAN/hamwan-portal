@@ -1,6 +1,6 @@
-from models import *
-from forms import IPAddressFormset
 from django.contrib import admin
+from portal.models import *
+from .forms import IPAddressFormset
 
 
 class IPAddressAdmin(admin.ModelAdmin):
@@ -26,13 +26,13 @@ admin.site.register(Site)
 class HostAdmin(admin.ModelAdmin):
     list_display = (
         'site',
-        '__unicode__',
+        '__str__',
         'owner',
         'type',
         'os',
         'get_ips'
     )
-    list_display_links = '__unicode__',
+    list_display_links = '__str__',
     list_filter = ('owner', 'site', 'type', 'os')
     search_fields = ('name', 'ipaddresses__ip', 'owner__username')
     save_as = True
@@ -42,20 +42,20 @@ class HostAdmin(admin.ModelAdmin):
     def get_ips(self, obj):
         return "<br>\n".join([str(a.ip) for a in obj.ipaddresses.all()])
     get_ips.short_description = "IP Addresses"
-    get_ips.allow_tags = True
+    #get_ips.allow_tags = True
 admin.site.register(Host, HostAdmin)
 
 
 class SubnetAdmin(admin.ModelAdmin):
     list_display = (
         'owner',
-        '__unicode__',
+        '__str__',
         'min',
         'max',
         'numhosts',
         'notes_short',
     )
-    list_display_links = '__unicode__',
+    list_display_links = '__str__',
     list_filter = ('owner', )
     readonly_fields = ('hosts', )
     search_fields = ('notes', )

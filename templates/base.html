@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#222222">
-    <title>{% block title %}HamWAN Admin Portal{% endblock %}</title>
+    <title>{% block title %}MEDNET Admin Portal{% endblock %}</title>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -77,14 +77,14 @@
             <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">
               Welcome, {{ request.user }}! <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="{% url 'portal.views.user_detail' %}">Edit name/email</a></li>
-                <li><a href="{% url 'django.contrib.auth.views.password_change' %}">Change Password</a></li>
-                <li><a href="{% url 'django.contrib.auth.views.logout_then_login' %}">Logout</a></li>
+                <li><a href="{% url 'user_detail' %}">Edit name/email</a></li>
+                <li><a href="{% url 'password_change' %}">Change Password</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
               </ul>
             </li>
 {% else %}
-            <li><a href="{% url 'django.contrib.auth.views.login' %}">Login</a></li>
-            <li><a href="{% url 'django.contrib.auth.views.password_reset' %}">Reset Password</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'password_reset' %}">Reset Password</a></li>
 {% endif %}
 {% if request.user.is_staff %}
             <li><a href="/admin/">Admin</a></li>
