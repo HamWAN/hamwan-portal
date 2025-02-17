@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from portal.models import *
 from .forms import IPAddressFormset
 
@@ -40,9 +41,9 @@ class HostAdmin(admin.ModelAdmin):
     inlines = [IPAddressInline]
 
     def get_ips(self, obj):
-        return "<br>\n".join([str(a.ip) for a in obj.ipaddresses.all()])
+        return format_html("<br>".join(str(a.ip) for a in obj.ipaddresses.all()))
     get_ips.short_description = "IP Addresses"
-    #get_ips.allow_tags = True
+    get_ips.allow_tags = True
 admin.site.register(Host, HostAdmin)
 
 
