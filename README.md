@@ -42,7 +42,6 @@ in DNA > Records.
 The content field for an SOA looks like this:
 
     a.ns.hamwan.net hostmaster.hamwan.org 0 86400 7200 3600000 86400
-    a.ns.hamwan.net hostmaster.hamwan.org 0 86400 7200 3600000 86400
 
 The content field for an NS record is just the DNS name of a authoritative nameserver for that domain, for example:
 
