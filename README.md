@@ -33,3 +33,20 @@ Open in browser: http://127.0.0.1:8000/admin/
     \q
     exit
 
+## Initial Data
+
+Add the domains you will be serving authoritatively in DNS > Domains.
+Then you will need to add SOA and NS records for each domain you are serving
+including in-addr.arpa and ip6.arpa (if you have IPv6 addresses). Add these records 
+in DNA > Records.
+The content field for an SOA looks like this:
+
+    a.ns.hamwan.net hostmaster.hamwan.org 0 86400 7200 3600000 86400
+    a.ns.hamwan.net hostmaster.hamwan.org 0 86400 7200 3600000 86400
+
+The content field for an NS record is just the DNS name of a authoritative nameserver for that domain, for example:
+
+    a.ns.hamwan.net
+    b.ns.hamwan.net
+
+You will then want to add host records with addresses for these nameservers.
