@@ -1,6 +1,6 @@
 # Installation
 
-## Create a Virutalenv
+## Create a Virtualenv
 
     virtualenv env
     source env/bin/activate
@@ -23,7 +23,7 @@ Open in browser: http://127.0.0.1:8000/admin/
 
 ## Postgresql fix (after running manage.py migrate)
 
-# manually change portal_ipaddress.ip to type "inet"
+Manually change portal_ipaddress.ip to type "inet":
 
     sudo su postgres
     psql -d portal
