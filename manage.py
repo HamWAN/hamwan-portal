@@ -4,10 +4,7 @@ import sys
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
-    sys.path.append("/var/www/mednet-portal/portal")
-
-    # DEBUG
-    sys.setrecursionlimit(300)
+    sys.path.append("/var/www/dns-portal/portal")
 
     from django.core.management import execute_from_command_line
 

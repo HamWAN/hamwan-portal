@@ -4,14 +4,13 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ROOT_DOMAIN = 'mednet'
+ROOT_DOMAIN = 'hamwan.org'
 DEFAULT_NETWORK = '172.16.0.0/12'
 
 AUTH_USER_MODEL = 'auth.User'
 
 ADMINS = (
-    ('Doug Kingston', 'dpk@randomnotes.org'),
-    ('Andy Ruschak', 'andrew.ruschak@providence.org'),
+    ('John Doe', 'jdoe@example.org'),
 )
 
 MANAGERS = ADMINS
@@ -79,7 +78,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = '/var/www/mednet-portal/config/static/'
+STATIC_ROOT = '/var/www/dns-portal/config/static/'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -90,8 +89,8 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/var/www/mednet-portal/css",
-    "/var/www/mednet-portal/config/css",
+    "/var/www/dns-portal/css",
+    "/var/www/dns-portal/config/css",
 )
 
 # List of finder classes that know how to find static files in
@@ -117,7 +116,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             # insert your TEMPLATE_DIRS here
-            '/var/www/mednet-portal/templates',
+            '/var/www/dns-portal/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -161,7 +160,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 #    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
 #    # Always use forward slashes, even on Windows.
 #    # Don't forget to use absolute paths, not relative paths.
-#    '/var/www/mednet-portal/templates',
+#    '/var/www/dns-portal/templates',
 #)
 
 INSTALLED_APPS = (
