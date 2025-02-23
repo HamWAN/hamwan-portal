@@ -12,9 +12,9 @@ from django.urls import reverse
 from config.settings import DATABASES, ROOT_DOMAIN
 from dns.models import Record, Domain
 
-from fields import MACAddressField
-from network import IPAddressField, IPNetworkField, IPNetworkQuerySet
-from network import reverse as IPreverse
+from .fields import MACAddressField
+from .network import IPAddressField, IPNetworkField, IPNetworkQuerySet
+from .network import reverse as IPreverse
 from ipaddress import ip_address, ip_network
 
 

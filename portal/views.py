@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic.edit import DeleteView
 
 from portal.models import Host, IPAddress, Site, Subnet
-from forms import UserHostForm, UserForm, UserIPAddressForm, IPAddressFormset, UserSubnetForm
+from .forms import UserHostForm, UserForm, UserIPAddressForm, IPAddressFormset, UserSubnetForm
 
 
 @login_required
