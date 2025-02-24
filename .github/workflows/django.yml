@@ -18,7 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build Container Image
-      run: docker build --build-arg PYTHON_VERSION=${{ matrix.python-version }} -t hamwan-portal .
+      run: docker build --build-arg PYTHON_VERSION=${{ matrix.python-version }} -t dns-portal .
     - name: Run Tests
       run: |
-        docker run --rm hamwan-portal manage.py test
+        docker run --rm dns-portal manage.py test

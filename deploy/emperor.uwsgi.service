@@ -2,7 +2,7 @@
 Description=uWSGI Emperor
 
 [Service]
-ExecStart=/var/www/hamwan-portal/env/bin/uwsgi --ini /var/www/hamwan-portal/deploy/uwsgi.ini
+ExecStart=/var/www/dns-portal/env/bin/uwsgi --ini /var/www/dns-portal/deploy/uwsgi.ini
 RuntimeDirectory=uwsgi
 Restart=always
 KillSignal=SIGQUIT
