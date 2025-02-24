@@ -3,7 +3,8 @@
 The dns-portal provides a GUI for managing basic host and network information for a site.  It integrates
 with powerdns and is built on Django.  Besides basic network information (host names and IP addresses), it
 also tracks basic inventory information including location, site, ownership, function, and can store adhoc notes
-for each object.
+for each object. More information on setup can be found on
+[the HamWAN website](https://hamwan.org/Standards/Network%20Engineering/Cell%20Site%20Configuration/Servers.html).
 
 # Installation
 
