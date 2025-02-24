@@ -1,3 +1,10 @@
+# Overview
+
+The dns-portal provides a GUI for managing basic host and network information for a site.  It integrates
+with powerdns and is built on Django.  Besides basic network information (host names and IP addresses), it
+also tracks basic inventory information including location, site, ownership, function, and can store adhoc notes
+for each object.
+
 # Installation
 
 ## Create a Virtualenv
