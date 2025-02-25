@@ -56,4 +56,4 @@ The content field for an NS record is just the DNS name of a authoritative names
     a.ns.hamwan.net
     b.ns.hamwan.net
 
-You will then want to add host records with addresses for these nameservers.
+You will then want to add host records with addresses for these nameservers with IP addresses.  (Portal > Hosts)
