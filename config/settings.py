@@ -15,7 +15,14 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
+TEST_DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'hamwan',
+    },
+}
+
+PRODUCTION_DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'portal',                      # Or path to database file if using sqlite3.
@@ -34,6 +41,8 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default.
     },
 }
+
+DATABASES = TEST_DATABASES
 
 # Uncomment in prod where pdns is a separate database
 DATABASE_ROUTERS = ['config.dbrouter.DnsRouter', ]
