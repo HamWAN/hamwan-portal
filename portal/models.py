@@ -79,9 +79,6 @@ class Site(models.Model):
     def __str__(self):
         return self.name
 
-    #def __unicode__(self):
-    #    return self.name
-
     class Meta:
         app_label = 'portal'
         ordering = ['name']
@@ -292,9 +289,6 @@ class Subnet(models.Model):
 
     def __str__(self):
         return str(self.network)
-
-    #def __unicode__(self):
-    #    return str(self.network)
 
     def clean(self):
         # convert slop like 10.0.1.0/22 to 10.0.0.0/22
