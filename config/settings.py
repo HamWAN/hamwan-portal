@@ -4,7 +4,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ROOT_DOMAIN = 'hamwan.org'
+ROOT_DOMAIN = 'hamwan.net'
 DEFAULT_NETWORK = '172.16.0.0/12'
 
 AUTH_USER_MODEL = 'auth.User'
@@ -15,7 +15,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
+PRODUCTIONS_DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'portal',                      # Or path to database file if using sqlite3.
@@ -34,6 +34,15 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default.
     },
 }
+
+TEST_DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'hamwan',
+    },
+}
+
+DATABASES = TEST_DATABASES
 
 # Uncomment in prod where pdns is a separate database
 DATABASE_ROUTERS = ['config.dbrouter.DnsRouter', ]
@@ -247,7 +256,3 @@ DEBUG_LOGGING = {
 }
 
 LOGGING=DEBUG_LOGGING
-
-AMPR_DNS_FROM = "portal-dns-bot@example.com"
-AMPR_DNS_TO = "ampraddr@example.com"
-AMPR_DNS_QUEUE = False  # '/example/path/amprdnsqueue'
