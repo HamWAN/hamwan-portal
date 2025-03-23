@@ -29,9 +29,6 @@ class Site(models.Model):
     def __str__(self):
         return self.name
 
-    #def __unicode__(self):
-    #    return self.name
-
     class Meta:
         db_table = 'map_sites'
 
@@ -53,9 +50,6 @@ class Client(models.Model):
     def __str__(self):
         return self.name
 
-    #def __unicode__(self):
-    #    return self.name
-
     class Meta:
         db_table = 'map_clients'
 
@@ -72,9 +66,6 @@ class Link(models.Model):
     
     def __str__(self):
         return self.name
-
-    #def __unicode__(self):
-    #    return self.name
 
     class Meta:
         db_table = 'map_links'

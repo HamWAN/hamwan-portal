@@ -102,4 +102,3 @@ class Record(models.Model):
 #     secret = models.CharField(max_length=255, blank=True)
 #     class Meta:
 #         db_table = 'tsigkeys'
-

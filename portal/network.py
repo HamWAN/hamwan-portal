@@ -30,9 +30,6 @@ class IPNetworkManager(models.Manager):
         self._queryset_class = qs_class
         super(IPNetworkManager, self).__init__()
 
-    #def get_query_set(self):
-    #    return self._queryset_class(self.model)
-
     def get_queryset(self):
         return self._queryset_class(self.model, using=self._db)
 
@@ -64,10 +61,6 @@ class IPNetworkQuerySet(models.query.QuerySet):
                    continue
             yield obj
             
-    #@classmethod
-    #def as_manager(cls, ManagerClass=IPNetworkManager):
-    #    return ManagerClass(cls)
-
     @classmethod
     def as_manager(cls):
         class CustomManager(models.Manager):
@@ -98,7 +91,10 @@ class IPNetworkField(models.Field):
             return value
 
         try:
-#            return IPNetwork(value.encode('latin-1'))
+            # Note: this was: return IPNetwork(value.encode('latin-1'))
+            # I am wonder if this change introduced some issues that
+            # we needed to solve by forcing ips to strings elsewhere
+            # when we moved to more modern python and django.
             return IPNetwork(value)
         except Exception as e:
             raise ValidationError(e)
@@ -109,8 +105,7 @@ class IPNetworkField(models.Field):
         elif lookup_type == 'in':
             return [self.get_prep_value(v) for v in value]           
         else:
-            raise TypeError('Lookup type %r not supported.' \
-                % lookup_type)
+            raise TypeError(f'Lookup type {lookup_type} not supported.')
 
     def get_prep_value(self, value):
         if isinstance(value, _IPAddrBase):
@@ -147,7 +142,7 @@ class IPAddressField(models.Field):
             return value
 
         try:
-#            return IPAddress(value.encode('latin-1')) #premptively changing this
+            # see comment above, same issue with value.encode('latin-1')
             return IPAddress(value)
         except Exception as e:
             return value

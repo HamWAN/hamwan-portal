@@ -15,7 +15,14 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-PRODUCTIONS_DATABASES = {
+TEST_DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'hamwan',
+    },
+}
+
+PRODUCTION_DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'portal',                      # Or path to database file if using sqlite3.
@@ -32,13 +39,6 @@ PRODUCTIONS_DATABASES = {
         'PASSWORD': 'password',
         'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
-    },
-}
-
-TEST_DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'hamwan',
     },
 }
 
@@ -99,7 +99,7 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     "/var/www/dns-portal/css",
-    "/var/www/dns-portal/config/css",
+    #"/var/www/dns-portal/config/css",
 )
 
 # List of finder classes that know how to find static files in
@@ -163,14 +163,6 @@ ROOT_URLCONF = 'config.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'config.wsgi.application'
-
-#DPK - XXX - old django?
-#TEMPLATE_DIRS = (
-#    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-#    # Always use forward slashes, even on Windows.
-#    # Don't forget to use absolute paths, not relative paths.
-#    '/var/www/dns-portal/templates',
-#)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -238,7 +230,7 @@ DEBUG_LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/tmp/mysite.log',
+            'filename': '/tmp/dns-portal.log',
             'formatter': 'verbose'
         },
     },

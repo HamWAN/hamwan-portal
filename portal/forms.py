@@ -55,7 +55,7 @@ class UserIPAddressForm(IPAddressForm):
 
         try:
             ip = ipaddr.IPAddress(self.cleaned_data['ip'])
-        except (ValueError, e):
+        except ValueError as e:
             raise forms.ValidationError(e)
 
         if not any([ip in subnet.network for subnet in subnets]):
