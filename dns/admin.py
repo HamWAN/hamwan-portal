@@ -1,15 +1,8 @@
-from models import *
+from portal.models import *
 from django.contrib import admin
 
 
-def send_to_ampr(modeladmin, request, queryset):
-    for record in queryset:
-        record._save_ampr_dns_command()
-send_to_ampr.short_description = "Re-send selected records to AMPR"
-
-
 class RecordAdmin(admin.ModelAdmin):
-    actions = [send_to_ampr]
     list_display = (
         'name',
         'type',

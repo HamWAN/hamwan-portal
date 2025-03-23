@@ -1,12 +1,12 @@
-from django.conf.urls import patterns, url
+from django.urls import re_path
 
-import views
+from dns import views
 
 
-urlpatterns = patterns('',
-    url(r'^$', views.own_dns),
-    url(r'^all/$', views.RecordListView.as_view(), name='record_list'),
-    url(r'^new/$', views.RecordCreate.as_view(), name="record_create"),
-    url(r'^(?P<pk>\d+)/$', views.RecordUpdate.as_view(), name="record_update"),
-    url(r'^(?P<pk>\d+)/delete/$', views.RecordDelete.as_view(), name="record_delete"),
-)
+urlpatterns = [
+    re_path(r'^$', views.own_dns, name='own_dns'),
+    re_path(r'^all/$', views.RecordListView.as_view(), name='record_list'),
+    re_path(r'^new/$', views.RecordCreate.as_view(), name="record_create"),
+    re_path(r'^(?P<pk>\d+)/$', views.RecordUpdate.as_view(), name="record_update"),
+    re_path(r'^(?P<pk>\d+)/delete/$', views.RecordDelete.as_view(), name="record_delete"),
+]

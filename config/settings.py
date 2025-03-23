@@ -1,23 +1,55 @@
-# Django settings for hamwanadmin project.
+# Django settings for this portal implementation project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ROOT_DOMAIN = 'hamwan.net'
+DEFAULT_NETWORK = '172.16.0.0/12'
+
+AUTH_USER_MODEL = 'auth.User'
 
 ADMINS = (
-    ('Tom Hayward', 'tom@tomh.us'),
+    ('John Doe', 'jdoe@example.org'),
 )
 
 MANAGERS = ADMINS
 
-DATABASES = {
+TEST_DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'hamwan',
     },
+    'pdns': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'pdns',
+    }
 }
 
+PRODUCTION_DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'portal',                      # Or path to database file if using sqlite3.
+        # The following settings are not used with sqlite3:
+        'USER': 'portal',
+        'PASSWORD': 'password',                  # Using uid auth, you won't need a password
+        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '',                      # Set to empty string for default.
+    },
+    'pdns': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'powerdns',                      # Or path to database file if using sqlite3.
+        'USER': 'powerdns',
+        'PASSWORD': 'password',
+        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '',                      # Set to empty string for default.
+    },
+}
+
+DATABASES = TEST_DATABASES
+
 # Uncomment in prod where pdns is a separate database
-# DATABASE_ROUTERS = ['hamwanadmin.dbrouter.DnsRouter', ]
+DATABASE_ROUTERS = ['config.dbrouter.DnsRouter', ]
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -59,7 +91,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = '/home/tom/src/hamwanadmin/static/'
+STATIC_ROOT = '/var/www/dns-portal/static/'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -70,7 +102,8 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/home/tom/src/hamwanadmin/css",
+    "/var/www/dns-portal/css",
+    #"/var/www/dns-portal/config/css",
 )
 
 # List of finder classes that know how to find static files in
@@ -82,7 +115,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'mr3vqdj(km8fd*h)ltxx-gb)md2u#)mg%y&(zr-=5d$$vbilto'
+SECRET_KEY = 'change-this-to-some-strong-random-text'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -91,14 +124,35 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
-TEMPLATE_CONTEXT_PROCESSORS = TCP + (
-    'django.core.context_processors.request',
-    'portal.context_processors.encrypted44',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            # insert your TEMPLATE_DIRS here
+            '/var/www/dns-portal/templates',
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
+                # list if you haven't customized them:
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+                # HamWAN portal additions
+                'django.template.context_processors.request',
+                'portal.context_processors.encrypted44',
+            ],
+        },
+    },
+]
 
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -109,17 +163,10 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'hamwanadmin.urls'
+ROOT_URLCONF = 'config.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'hamwanadmin.wsgi.application'
-
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    '/home/tom/src/hamwanadmin/templates',
-)
+WSGI_APPLICATION = 'config.wsgi.application'
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -147,7 +194,31 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
-LOGGING = {
+PRODUCTION_LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
+
+DEBUG_LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
@@ -163,7 +234,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'mysite.log',
+            'filename': '/tmp/dns-portal.log',
             'formatter': 'verbose'
         },
     },
@@ -180,6 +251,4 @@ LOGGING = {
     }
 }
 
-AMPR_DNS_FROM = "portal-dns-bot@example.com"
-AMPR_DNS_TO = "ampraddr@example.com"
-AMPR_DNS_QUEUE = False  # '/example/path/amprdnsqueue'
+LOGGING=DEBUG_LOGGING

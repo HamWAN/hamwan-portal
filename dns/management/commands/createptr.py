@@ -2,11 +2,12 @@ from django.core.management.base import BaseCommand, CommandError
 from dns.models import Record, Domain
 from portal.network import reverse
 from ipaddr import IPAddress, IPNetwork
+from config.settings import ROOT_DOMAIN, DEFAULT_NETWORK
 
 class Command(BaseCommand):
     args = '<network> <pattern>'
-    defaultnetwork = IPNetwork('44.24.240.0/20')
-    defaultpattern = '%(0)s-%(1)s-%(2)s-%(3)s.ip.hamwan.net'
+    defaultnetwork = IPNetwork(DEFAULT_NETWORK)
+    defaultpattern = f'%(0)s-%(1)s-%(2)s-%(3)s.ip.{ROOT_DOMAIN}'
     help = 'Creates a PTR for all IPs without a current PTR.\n\n' \
            'The default pattern is: %s' % defaultpattern
 

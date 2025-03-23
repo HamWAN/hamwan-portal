@@ -11,11 +11,11 @@ from django.db.models import Q
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from models import Record
+from dns.models import Record
 from portal.models import Subnet
 from portal.network import reverse
-from forms import RecordForm
-
+from dns.forms import RecordForm
+from config.settings import ROOT_DOMAIN
 
 class RecordCreate(CreateView):
     model = Record
@@ -60,12 +60,12 @@ class RecordDelete(DeleteView):
     def get_object(self, queryset=None):
         """ Hook to ensure object is owned by request.user. """
         obj = super(RecordDelete, self).get_object()
-        subdomain = "%s.hamwan.net" % self.request.user.username.lower()
+        subdomain = f'{self.request.username.lower()}.{ROOT_DOMAIN}'
         subnets = Subnet.objects.filter(owner=self.request.user)
 
         if obj.name != subdomain and \
            not obj.name.endswith(".%s" % subdomain):
-            # name doesn't end with user.hamwan.net, check reverse
+            # name doesn't end with user.ROOT_DOMAIN, check reverse
             try:
                 ip = IPAddress(reverse(obj.name))
             except ValueError:
@@ -97,7 +97,7 @@ class RecordListView(ListView):
 @login_required
 def own_dns(request):
     # own_hosts = Host.objects.select_related('owner').filter(owner=request.user)
-    hostname_suffix = "%s.hamwan.net" % request.user.username
+    hostname_suffix = f'{request.user.username}.{ROOT_DOMAIN}'
     user_subnets = Subnet.objects.filter(owner=request.user)
     return render(request, 'dns/dns.html', {
         'own_dns':  Record.objects.filter(

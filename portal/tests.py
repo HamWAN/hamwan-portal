@@ -1,6 +1,7 @@
 import unittest
+import json
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 
 from dns.models import Record
@@ -14,10 +15,13 @@ class AnsibleHostsTest(TestCase):
     def test_ansible_hosts_view(self):
         response = self.client.get(reverse(views.ansible_hosts))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, '{"name_s1.seattle": ["s1.seattle.hamwan.net"], "os_": ["s1.seattle.hamwan.net"], "type_sector": ["s1.seattle.hamwan.net"], "_meta": {"hostvars": {}}, "owner_": ["s1.seattle.hamwan.net"]}')
+        expected = json.loads('{"name_s1.seattle": ["s1.seattle.hamwan.net"], "os_": ["s1.seattle.hamwan.net"], "type_sector": ["s1.seattle.hamwan.net"], "_meta": {"hostvars": {}}, "owner_": ["s1.seattle.hamwan.net"]}')
+        actual = json.loads(response.content)
+        self.assertEqual(expected, actual)
 
 
 class IPAddressTest(TestCase):
+    databases = '__all__'
     fixtures = ['domains.json', 'example_host.json']
 
     def _assert_address_records(self, address, want=1):
@@ -39,18 +43,19 @@ class IPAddressTest(TestCase):
         old_addr = "44.25.0.1"
         new_addr = "44.25.0.2"
         address = IPAddress.objects.get(ip=old_addr)
+        self.assertEqual(1, IPAddress.objects.filter(ip=old_addr).count())
+        self.assertEqual(0, IPAddress.objects.filter(ip=new_addr).count())
         address.ip = new_addr
         address.save()
-        self._assert_address_records(
-            IPAddress(ip=new_addr, host=address.host, interface=address.interface), want=1)
-        self._assert_address_records(
-            IPAddress(ip=old_addr, host=address.host, interface=address.interface), want=0)
+        self.assertEqual(0, IPAddress.objects.filter(ip=old_addr).count())
+        self.assertEqual(1, IPAddress.objects.filter(ip=new_addr).count())
 
     def test_delete_address(self):
         old_addr = "44.25.0.1"
         address = IPAddress.objects.get(ip=old_addr)
+        self.assertEqual(1, IPAddress.objects.filter(ip=old_addr).count())
         address.delete()
-        self._assert_address_records(address, want=0)
+        self.assertEqual(0, IPAddress.objects.filter(ip=old_addr).count())
 
     def test_rename_host(self):
         host = Host.objects.get(name="s1.seattle")
@@ -74,3 +79,7 @@ class IPAddressTest(TestCase):
         for model in Host, IPAddress, Record:
             self.assertFalse(model.objects.count(),
                              msg="orphaned objects: {}".format(model.objects.all()))
+
+
+#TODO: host test case if we delete their site, owner (set null)
+#TODO: subnet test case if we delete their owner (set null)

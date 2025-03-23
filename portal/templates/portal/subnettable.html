@@ -14,7 +14,7 @@
     {% for subnet in subnets %}
         <tr>
           <td>{{ subnet.owner }}</td>
-          <td><a href="{% url 'portal.views.subnet_detail' subnet %}">{{ subnet }}</a></td>
+          <td><a href="{% url 'subnet_detail' subnet %}">{{ subnet }}</a></td>
           <td>{{ subnet.min }}</td>
           <td>{{ subnet.max }}</td>
           <td>{{ subnet.numhosts|safe }}</td>

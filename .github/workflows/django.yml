@@ -13,12 +13,13 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [2.7] # TODO: python3 support, 3.6, 3.7, 3.8]
+        #python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v2
     - name: Build Container Image
-      run: docker build --build-arg PYTHON_VERSION=${{ matrix.python-version }} -t hamwan-portal .
+      run: docker build --build-arg PYTHON_VERSION=${{ matrix.python-version }} -t dns-portal .
     - name: Run Tests
       run: |
-        docker run --rm hamwan-portal manage.py test
+        docker run --rm dns-portal manage.py test

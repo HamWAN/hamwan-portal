@@ -26,7 +26,7 @@ class Site(models.Model):
     status = models.CharField(max_length=20L, db_column='STATUS', blank=True) # Field name made lowercase.
     comment = models.CharField(max_length=255L, db_column='COMMENT', blank=True) # Field name made lowercase.
     
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -47,7 +47,7 @@ class Client(models.Model):
     survey_data = models.CharField(max_length=255L, db_column='SURVEY_DATA', blank=True) # Field name made lowercase.
     public = models.BooleanField(db_column='PUBLIC') # Field name made lowercase.
     
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -64,7 +64,7 @@ class Link(models.Model):
     speed_rrd = models.CharField(max_length=255L, db_column='SPEED_RRD', blank=True) # Field name made lowercase.
     speed_rrd_value = models.CharField(max_length=255L, db_column='SPEED_RRD_VALUE', blank=True) # Field name made lowercase.
     
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:

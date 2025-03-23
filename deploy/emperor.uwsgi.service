@@ -1,0 +1,14 @@
+[Unit]
+Description=uWSGI Emperor
+
+[Service]
+ExecStart=/var/www/dns-portal/env/bin/uwsgi --ini /var/www/dns-portal/deploy/uwsgi.ini
+RuntimeDirectory=uwsgi
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

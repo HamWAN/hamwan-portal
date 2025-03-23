@@ -1,7 +1,7 @@
 # https://djangosnippets.org/snippets/1337/
 import re
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.forms import fields
 from django.db import models
 

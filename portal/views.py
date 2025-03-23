@@ -9,8 +9,8 @@ from django.forms.models import inlineformset_factory
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import DeleteView
 
-from models import Host, IPAddress, Site, Subnet
-from forms import UserHostForm, UserForm, UserIPAddressForm, IPAddressFormset, UserSubnetForm
+from portal.models import Host, IPAddress, Site, Subnet
+from .forms import UserHostForm, UserForm, UserIPAddressForm, IPAddressFormset, UserSubnetForm
 
 
 @login_required

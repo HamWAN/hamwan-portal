@@ -1,5 +1,5 @@
 from django import template
-from django.core import urlresolvers
+from django.urls import reverse
 
 
 register = template.Library()
