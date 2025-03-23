@@ -20,6 +20,10 @@ TEST_DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'hamwan',
     },
+    'pdns': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'pdns',
+    }
 }
 
 PRODUCTION_DATABASES = {
